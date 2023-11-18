@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Search Engine</title>
+
+    <!-- Include Bootstrap stylesheet -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Lexend' rel='stylesheet'>
+
+    <script src="{{url_for('static', filename='scripts.js')}}"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+
+    <script>
+        function logout() {
+            location.href = "{{ url_for('auth.logout') }}";
+        }
+    </script>
+</head>
+<body>
+    <!-- Navigation bar with Bootstrap styling -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Video Search Engine</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Contact</a>
+                </li>
+            </ul>
+            <button class="btn btn-outline-danger my-2 my-sm-0" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <div class="search-container">
+        <input type="text" id="search-bar" placeholder="Search">
+        <button type="submit"><i class="fa fa-search"></i></button>
+    </div>
+
+    <div class="main-container">
+        <div id="video-panel">
+            <h2>Current Video</h2>
+            <div id="video-container"></div>
+        </div>
+
+        <div id="side-panel">
+            <h2>Video Suggestions</h2>
+            <ul id="suggested-videos">
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Search Engine</title>
+
+    <!-- Include Bootstrap stylesheet -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <style>
+        body {
+            padding-top: 56px; /* Adjust based on the height of your navbar */
+        }
+
+        .main-content {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        .youtube-images img {
+            width: 100%;
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+    
+</head>
+<body>
+    <!-- Navigation bar with Bootstrap styling -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+        <a class="navbar-brand" href="#">Video Search Engine</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                {% if user.is_authenticated %}
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{ url_for('views.home') }}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('auth.signup') }}">Signup</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Page content -->
+    <div class="container mt-5 main-content">
+        <h1 class="mb-4">Video Search Engine</h1>
+        <p>This is a video search engine. Welcome to our platform where you can discover and explore a wide variety of videos.</p>
+    </div>
+
+    <!-- Two YouTube images side by side -->
+    <div class="container mt-4 youtube-images">
+        <div class="row">
+            <div class="col-md-6">
+                <a href="https://pureinfotech.com/wp-content/uploads/2023/05/windows-11-install-youtube-app-hero.webp" target="_blank">
+                    <img src="https://pureinfotech.com/wp-content/uploads/2023/05/windows-11-install-youtube-app-hero.webp" alt="YouTube Image 1">
+                </a>
+            </div>
+            <div class="col-md-6">
+                <a href="https://www.kapwing.com/resources/content/images/2021/02/Screen-Shot-2021-02-02-at-2.17.11-PM.png" target="_blank">
+                    <img src="https://www.kapwing.com/resources/content/images/2021/02/Screen-Shot-2021-02-02-at-2.17.11-PM.png" alt="YouTube Image 2">
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
