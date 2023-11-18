@@ -146,11 +146,11 @@ class Neo4jHandler(object):
                 video_id1 = video_id_list[i]
                 video_id2 = video_id_list[j]
                 self.create_same_channel_relationship(video_id1, video_id2)
-                # self.create_similar_tags_relationship(video_id1, video_id2)
-                # self.create_similar_description_relationship(video_id1, video_id2)
-                # self.create_similar_title_relationship(video_id1, video_id2)
-        # for video_id in video_id_list:
-        #     self.create_video_channel_relationship(video_id)
+                self.create_similar_tags_relationship(video_id1, video_id2)
+                self.create_similar_description_relationship(video_id1, video_id2)
+                self.create_similar_title_relationship(video_id1, video_id2)
+        for video_id in video_id_list:
+            self.create_video_channel_relationship(video_id)
 
 
 neo4j = Neo4jHandler(uri="bolt://localhost:7687", username="neo4j", password="password")
