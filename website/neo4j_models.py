@@ -302,23 +302,27 @@ def push_data_to_users(user_id, property_name, property_value):
 
 
 def update_like_in_cache(video_id):
-    # TODO: Checking if user disliked video
     with open("cache.json", "r") as file:
         cache = json.load(file)
     cache[video_id]["likes"] += 1
-
+    with open("cache.json", "w") as file:
+        json.dump(cache, file)
 
 
 def update_dislike_in_cache(video_id):
     with open("cache.json", "r") as file:
         cache = json.load(file)
     cache[video_id]["dislikes"] += 1
+    with open("cache.json", "w") as file:
+        json.dump(cache, file)
 
 
 def update_views_in_cache(video_id):
     with open("cache.json", "r") as file:
         cache = json.load(file)
     cache[video_id]["views"] += 1
+    with open("cache.json", "w") as file:
+        json.dump(cache, file)
 
 
 class User(Neo4jHandler):
