@@ -54,6 +54,9 @@ class MongoDBHandler(object):
             document['similarityScore'] = similarity_score
             filtered_results.append(document)
 
+        for result in filtered_results:
+            result['_id'] = str(result['_id'])
+
         filtered_results = sorted(filtered_results, key=lambda k: k['similarityScore'], reverse=True)
         return filtered_results[:10]
 

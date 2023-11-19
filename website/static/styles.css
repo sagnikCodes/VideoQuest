@@ -106,3 +106,49 @@ h2 {
 .suggestion-link {
     text-decoration: none;
 }
+
+#video-buttons {
+    display: flex;
+    margin-top: 20px;
+}
+
+#video-buttons button {
+    padding: 10px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin: 0 5px;
+}
+
+#video-buttons button i {
+    font-size: 20px;
+}
+
+#like-button {
+    border: 2px solid #333;
+    background-color: #ccc;
+    color: #333;
+}
+
+#dislike-button {
+    border: 2px solid #333;
+    background-color: #ccc;
+    color: #333;
+}
+
+#subscribe-button {
+    border: 2px solid #333;
+    background-color: #ccc;
+    color: #333;
+}
+
+#bell-icon-button {
+    border: 2px solid #333;
+    background-color: #ccc;
+    color: #333;
+}
+
+.active {
+    background-color: #333 !important;
+    color: #fff !important;
+}

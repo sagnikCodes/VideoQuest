@@ -81,7 +81,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const videoContainer = document.getElementById("video-container");
     videoContainer.appendChild(iframe);
 
-
     const suggestedVideos = [
         {
             title: "Suggested Video 1",
@@ -132,4 +131,61 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
 
+    const likeButton = document.getElementById('like-button');
+    const dislikeButton = document.getElementById('dislike-button');
+    const subscribeButton = document.getElementById('subscribe-button');
+    const bellIconButton = document.getElementById('bell-icon-button');
+
+    let likeActive = false;
+    let dislikeActive = false;
+    let subscribeActive = false;
+    let bellIconActive = false;
+
+    function toggleButtonState(button, isActive) {
+        if (isActive) {
+            button.classList.add('active');
+        } else {
+            button.classList.remove('active');
+        }
+    }
+
+    function updateSubscribeButton() {
+        if (subscribeActive) {
+            subscribeButton.textContent = "SUBSCRIBED";
+            bellIconButton.style.display = "inline-block";
+        } else {
+            subscribeButton.textContent = "SUBSCRIBE";
+            bellIconButton.style.display = "none";
+        }
+    }
+
+    likeButton.addEventListener('click', function() {
+        likeActive = !likeActive;
+        dislikeActive = false;
+        toggleButtonState(likeButton, likeActive);
+        toggleButtonState(dislikeButton, dislikeActive);
+    });
+
+    dislikeButton.addEventListener('click', function() {
+        dislikeActive = !dislikeActive;
+        likeActive = false;
+        toggleButtonState(likeButton, likeActive);
+        toggleButtonState(dislikeButton, dislikeActive);
+    });
+
+    subscribeButton.addEventListener('click', function () {
+        subscribeActive = !subscribeActive;
+        bellIconActive = false;
+
+        toggleButtonState(subscribeButton, subscribeActive);
+        toggleButtonState(bellIconButton, bellIconActive);
+
+        updateSubscribeButton();
+    });
+
+    bellIconButton.addEventListener('click', function () {
+        bellIconActive = !bellIconActive;
+
+        toggleButtonState(bellIconButton, bellIconActive);
+    });
 });

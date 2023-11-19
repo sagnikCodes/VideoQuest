@@ -6,14 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Video Search Engine</title>
 
-    <!-- Include Bootstrap stylesheet -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href='https://fonts.googleapis.com/css?family=Lexend' rel='stylesheet'>
 
-    <script src="{{url_for('static', filename='scripts.js')}}"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
 
     <script>
@@ -24,7 +22,6 @@
 </head>
 
 <body>
-    <!-- Navigation bar with Bootstrap styling -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#">Video Search Engine</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
@@ -34,7 +31,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item active">
-                    <a class="nav-link" href="#">About</a>
+                    <a class="nav-link" href="#">About</a#
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Contact</a>
@@ -46,31 +43,62 @@
 
     <form action="{{ url_for('views.search') }}" method="POST">
         <div class="search-container">
-            <input type="text" name="search_query" id="search-bar" placeholder="Search">
+            <input type="text" name="search_query" id="search-bar" placeholder="Search" value="{{search_query}}">
             <button type="submit"><i class="fa fa-search"></i></button>
         </div>
     </form>
 
     <div class="main-container">
         <div id="video-panel">
-            <h2>Current Video</h2>
             <div id="video-container"></div>
 
-            <div id="video-buttons" class="hidden">
-                <button id="like-button"><i class="fa fa-thumbs-up"></i></button>
-                <button id="dislike-button"><i class="fa fa-thumbs-down"></i></button>
-                <button id="subscribe-button">SUBSCRIBE</button>
-                <button id="bell-icon-button"><i class="fa fa-bell"></i></button>
+            <div id="search-results-panel">
             </div>
-
-        </div>
-
-        <div id="side-panel">
-            <h2>Video Suggestions</h2>
-            <ul id="suggested-videos">
-            </ul>
         </div>
     </div>
+
+    <script>
+        const searchResults = {{ search_results| tojson | safe}};
+
+        const searchResultsPanel = document.getElementById("search-results-panel");
+        searchResultsPanel.innerHTML = "";
+
+        searchResults.forEach((result) => {
+            const resultBox = document.createElement("div");
+            resultBox.classList.add("suggestion-box");
+
+            const thumbnail = document.createElement("div");
+            thumbnail.classList.add("suggestion-thumbnail");
+            const thumbnailImage = document.createElement("img");
+            thumbnailImage.src = result.thumbnails.default.url;
+            thumbnail.appendChild(thumbnailImage);
+
+            const details = document.createElement("div");
+            details.classList.add("suggestion-details");
+
+            const title = document.createElement("div");
+            title.classList.add("suggestion-title");
+            title.textContent = result.title;
+
+            const description = document.createElement("div");
+            description.classList.add("suggestion-description");
+            let descriptionText = result.description;
+            if (descriptionText.length > 100) {
+                descriptionText = descriptionText.substring(0, 100) + "...";
+            }
+            description.textContent = descriptionText;
+
+            details.appendChild(title);
+            details.appendChild(description);
+            resultBox.appendChild(thumbnail);
+            resultBox.appendChild(details);
+
+            searchResultsPanel.appendChild(resultBox);
+        });
+
+
+
+    </script>
 </body>
 
 </html>

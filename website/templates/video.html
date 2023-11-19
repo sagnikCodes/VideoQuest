@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,7 +8,7 @@
     <!-- Include Bootstrap stylesheet -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static', filename='styles.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href='https://fonts.googleapis.com/css?family=Lexend' rel='stylesheet'>
 
@@ -22,13 +21,11 @@
         }
     </script>
 </head>
-
 <body>
     <!-- Navigation bar with Bootstrap styling -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#">Video Search Engine</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
@@ -44,12 +41,10 @@
         </div>
     </nav>
 
-    <form action="{{ url_for('views.search') }}" method="POST">
-        <div class="search-container">
-            <input type="text" name="search_query" id="search-bar" placeholder="Search">
-            <button type="submit"><i class="fa fa-search"></i></button>
-        </div>
-    </form>
+    <div class="search-container">
+        <input type="text" id="search-bar" placeholder="Search">
+        <button type="submit"><i class="fa fa-search"></i></button>
+    </div>
 
     <div class="main-container">
         <div id="video-panel">
@@ -72,5 +67,4 @@
         </div>
     </div>
 </body>
-
 </html>
