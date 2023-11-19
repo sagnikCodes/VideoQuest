@@ -2,9 +2,14 @@ from flask import Blueprint, render_template, request, redirect, url_for
 from .mysql_models import User
 from werkzeug.security import generate_password_hash, check_password_hash
 from . import db
-from flask_login import login_user, login_required, logout_user
+from flask_login import login_user, login_required, logout_user, current_user
 from .mysql_models import User
-from flask_login import login_required, current_user
+from .neo4j_models import Neo4jHandler
+import json
+
+
+with open('users.json', 'r') as file:
+    users = json.load(file)
 
 
 auth = Blueprint('auth', __name__)
@@ -51,6 +56,11 @@ def signup():
         db.session.add(new_user)
         db.session.commit()
         login_user(new_user, remember=True)
+        neo4j = Neo4jHandler()
+        user_id = current_user.id
+        neo4j.create_user_node(user_id)
+        # Initialize json
+        users[user_id] = {"liked": [], "disliked": [],"subscribed": [], "hit_bell_icon": []}
         return redirect(url_for('views.home'))
         
     return render_template("signup.html", user=current_user)
