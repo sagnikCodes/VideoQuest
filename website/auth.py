@@ -61,6 +61,8 @@ def signup():
         neo4j.create_user_node(user_id)
         # Initialize json
         users[user_id] = {"liked": [], "disliked": [],"subscribed": [], "hit_bell_icon": []}
+        with open("users.json", "w") as file:
+            json.dump(users, file)
         return redirect(url_for('views.home'))
         
     return render_template("signup.html", user=current_user)
