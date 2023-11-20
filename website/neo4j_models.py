@@ -5,15 +5,12 @@ from py2neo import Graph, Node, Relationship
 import nltk
 from nltk.corpus import stopwords
 from flask_login import login_required, current_user
-import json
+from sys import stderr
 
 client = MongoClient('localhost', 27017)
-# db = client['test_database']
-# collection = db['test_collection']
 db = client['testdb']
 collection = db['videos']
 videos_data = list(collection.find())
-# nltk.download('stopwords')
 english_stopwords = set(stopwords.words('english'))
 
 with open('users.json', 'r') as file:
@@ -28,6 +25,9 @@ class Neo4jHandler(object):
         query = f"MATCH (v:VIDEO {{video_id: '{video_id}'}}) RETURN v.{property_name} AS result"
         result = self.graph.run(query).evaluate()
         return result
+    
+    def get_video_property(self, video_id, property_name):
+        return self.__get_video_property(video_id, property_name)
     
     def __get_num_common_property(self, video_node1, video_node2, property_name):
         video_id1, video_id2 = video_node1['video_id'], video_node2['video_id']
@@ -111,6 +111,7 @@ class Neo4jHandler(object):
         self.graph.create(video_channel_relationship)
         
     def create_user_subscribed_channel_relationship(self, user_id, channel_id):
+        user_id = int(user_id)
         user_node = self.graph.nodes.match("USER", user_id=user_id).first() or Node("USER", user_id=user_id)
         channel_node = self.graph.nodes.match("CHANNEL", channel_id=channel_id).first()
         if(self.is_already_subscribed(user_id, channel_id)):
@@ -120,10 +121,16 @@ class Neo4jHandler(object):
         self.graph.create(user_subsribed_channel_relationship)
         
     def create_user_liked_video_relationship(self, user_id, video_id):
+        user_id = int(user_id)
         user_node = self.graph.nodes.match("USER", user_id=user_id).first()
         video_node = self.graph.nodes.match("VIDEO", video_id=video_id).first()
         if(self.is_already_liked(user_id, video_id)):
             self.remove_like_relationship(user_id, video_id)
+            query = (
+                f"MATCH (video:VIDEO {{video_id: '{video_id}'}}) "
+                "SET video.likes = video.likes - 1"
+            )
+            self.graph.run(query)
             return
         if(self.is_already_disliked(user_id, video_id)):
             self.remove_dislike_relationship(user_id, video_id)
@@ -142,10 +149,16 @@ class Neo4jHandler(object):
         self.graph.run(query)
     
     def create_user_disliked_video_relationship(self, user_id, video_id):
+        user_id = int(user_id)
         user_node = self.graph.nodes.match("USER", user_id=user_id).first()
         video_node = self.graph.nodes.match("VIDEO", video_id=video_id).first()
         if(self.is_already_disliked(user_id, video_id)):
             self.remove_dislike_relationship(user_id, video_id)
+            query = (
+                f"MATCH (video:VIDEO {{video_id: '{video_id}'}}) "
+                "SET video.dislikes = video.dislikes - 1"
+            )
+            self.graph.run(query)
             return
         if(self.is_already_liked(user_id, video_id)):
             self.remove_like_relationship(user_id, video_id)
@@ -197,7 +210,7 @@ class Neo4jHandler(object):
     
     def get_user_video_relationship(self, user_id, video_id, relationship):
         query = (
-            f"MATCH (user:USER {{user_id: '{user_id}'}})-[r:{relationship}]-(video:VIDEO {{video_id: '{video_id}'}}) "
+            f"MATCH (user:USER {{user_id: {user_id}}})-[r:{relationship}]-(video:VIDEO {{video_id: '{video_id}'}}) "
             f"RETURN COUNT(r) > 0"
         )
         
@@ -206,7 +219,7 @@ class Neo4jHandler(object):
     def get_user_channel_relationship(self, user_id, video_id, relationship):
         channel_id = self.__get_video_property(video_id, "channel")
         query = (
-            f"MATCH (user:USER {{user_id: '{user_id}'}})-[r:{relationship}]-(channel:CHANNEL {{channel_id: '{channel_id}'}}) "
+            f"MATCH (user:USER {{user_id: {user_id}}})-[r:{relationship}]-(channel:CHANNEL {{channel_id: '{channel_id}'}}) "
             f"RETURN COUNT(r) > 0"
         )
 
@@ -214,7 +227,7 @@ class Neo4jHandler(object):
     
     def remove_like_relationship(self, user_id, video_id):
         query = (
-            f"MATCH (:USER {{user_id: '{user_id}'}})-[r:LIKED]-(:VIDEO {{video_id: '{video_id}'}}) "
+            f"MATCH (:USER {{user_id: {user_id}}})-[r:LIKED]-(:VIDEO {{video_id: '{video_id}'}}) "
             f"DELETE r"
         )
 
@@ -222,7 +235,7 @@ class Neo4jHandler(object):
 
     def remove_dislike_relationship(self, user_id, video_id):
         query = (
-            f"MATCH (:USER {{user_id: '{user_id}'}})-[r:DISLIKED]-(:VIDEO {{video_id: '{video_id}'}}) "
+            f"MATCH (:USER {{user_id: {user_id}}})-[r:DISLIKED]-(:VIDEO {{video_id: '{video_id}'}}) "
             f"DELETE r"
         )
 
@@ -230,7 +243,7 @@ class Neo4jHandler(object):
 
     def remove_subscribed_relationship(self, user_id, channel_id):
         query = (
-            f"MATCH (:USER {{user_id: '{user_id}'}})-[r:SUBSCRIBED]-(:CHANNEL {{channel_id: '{channel_id}'}}) "
+            f"MATCH (:USER {{user_id: {user_id}}})-[r:SUBSCRIBED]-(:CHANNEL {{channel_id: '{channel_id}'}}) "
             f"DELETE r"
         )
 
@@ -238,7 +251,7 @@ class Neo4jHandler(object):
 
     def is_already_liked(self, user_id, video_id):
         query = (
-            f"MATCH (:USER {{user_id: '{user_id}'}})-[r:LIKED]-(:VIDEO {{video_id: '{video_id}'}}) "
+            f"MATCH (:USER {{user_id: {user_id}}})-[r:LIKED]-(:VIDEO {{video_id: '{video_id}'}}) "
             f"RETURN COUNT(r) > 0"
         )
 
@@ -246,7 +259,7 @@ class Neo4jHandler(object):
     
     def is_already_disliked(self, user_id, video_id):
         query = (
-            f"MATCH (:USER {{user_id: '{user_id}'}})-[r:DISLIKED]-(:VIDEO {{video_id: '{video_id}'}}) "
+            f"MATCH (:USER {{user_id: {user_id}}})-[r:DISLIKED]-(:VIDEO {{video_id: '{video_id}'}}) "
             f"RETURN COUNT(r) > 0"
         )
 
@@ -254,7 +267,7 @@ class Neo4jHandler(object):
 
     def is_already_subscribed(self, user_id, channel_id):
         query = (
-            f"MATCH (:USER {{user_id: '{user_id}'}})-[r:SUBSCRIBED]-(:CHANNEL {{channel_id: '{channel_id}'}}) "
+            f"MATCH (:USER {{user_id: {user_id}}})-[r:SUBSCRIBED]-(:CHANNEL {{channel_id: '{channel_id}'}}) "
             f"RETURN COUNT(r) > 0"
         )
 
@@ -380,7 +393,7 @@ class Neo4jHandler(object):
         top_5_scores = sorted(scores)[::-1][:5]
         top_5_videos = [video[1] for video in top_5_scores]
         return top_5_videos
-    
+
     def get_count_of_common_liked_videos(self, user_id1, user_id2):
         query = (
             f"MATCH (:USER {{user_id: {user_id1}}})-[:LIKED]-> (video:VIDEO) "
@@ -442,7 +455,7 @@ class Neo4jHandler(object):
         with open("users_relation.json", "r") as file:
             users_relation = json.load(file)
         other_users_relation_data = users_relation[str(current_user_id)]
-        most_related_user_id, max_relation_score = None
+        most_related_user_id, max_relation_score = None, 0
         for user_id, user_relation_data in other_users_relation_data.items():
             relation_score = self.get_relation_score(user_relation_data)
             if relation_score > max_relation_score:
@@ -520,7 +533,7 @@ def update_views_in_cache(video_id):
         cache = json.load(file)
     cache[video_id]["views"] += 1
     with open("individual.json", "w") as file:
-        json.dump(cache, file,indent=4)
+        json.dump(cache, file, indent=4)
 
 
 class User(Neo4jHandler):
@@ -546,6 +559,16 @@ class User(Neo4jHandler):
         if not is_already_disliked:
             update_dislike_in_cache(video_id)
         self.create_user_disliked_video_relationship(self.user_id, video_id)
+
+    def get_metadata(self, video_id):
+        with open("users.json", "r") as file:
+            users = json.load(file)
+        user_data = users[str(self.user_id)]
+        video_data = {}
+        video_data["liked"] = video_id in user_data["liked"]
+        video_data["disliked"] = video_id in user_data["disliked"]
+        video_data["subscribed"] = self.is_already_subscribed(self.user_id, self.get_video_property(video_id, "channel"))
+        return video_data
 
 
 def main():

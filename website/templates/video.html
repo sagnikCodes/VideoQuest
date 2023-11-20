@@ -2,17 +2,18 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Video Search Engine</title>
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
 
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link href='https://fonts.googleapis.com/css?family=Lexend' rel='stylesheet'>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link href="https://fonts.googleapis.com/css?family=Lexend" rel="stylesheet" />
 
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
     <script>
         function logout() {
@@ -37,13 +38,15 @@
                     <a class="nav-link" href="#">Contact</a>
                 </li>
             </ul>
-            <button class="btn btn-outline-danger my-2 my-sm-0" onclick="logout()">Logout</button>
+            <button class="btn btn-outline-danger my-2 my-sm-0" onclick="logout()">
+                Logout
+            </button>
         </div>
     </nav>
 
     <form action="{{ url_for('views.search') }}" method="POST">
         <div class="search-container">
-            <input type="text" name="search_query" id="search-bar" placeholder="Search" value="">
+            <input type="text" name="search_query" id="search-bar" placeholder="Search" value="" />
             <button type="submit"><i class="fa fa-search"></i></button>
         </div>
     </form>
@@ -56,13 +59,47 @@
                     allowfullscreen="true"></iframe>
             </div>
 
-            <div id="video-buttons" class="hidden">
-                <button id="like-button"><i class="fa fa-thumbs-up"></i></button>
-                <button id="dislike-button"><i class="fa fa-thumbs-down"></i></button>
-                <button id="subscribe-button">SUBSCRIBE</button>
-                <button id="bell-icon-button"><i class="fa fa-bell"></i></button>
-            </div>
+            <form method="post" action="{{ url_for('views.like') }}">
+                <div id="video-buttons">
+                    <p id="like-count">Likes: {{ current_video_data.likeCount }}</p>
+                    {% if liked %}
+                    <button class="vote-btn active" id="like-button" type="submit" name="action" value="like">
+                        <i class="fa fa-thumbs-up"></i>
+                    </button>
+                    {% else %}
+                    <button class="vote-btn" id="like-button" type="submit" name="action" value="like">
+                        <i class="fa fa-thumbs-up"></i>
+                    </button>
+                    {% endif %}
 
+                    <p id="dislike-count">
+                        Dislikes: {{ current_video_data.dislikeCount }}
+                    </p>
+                    {% if disliked %}
+                    <button class="vote-btn active" id="dislike-button" type="submit" name="action" value="dislike">
+                        <i class="fa fa-thumbs-down"></i>
+                    </button>
+                    {% else %}
+                    <button class="vote-btn" id="dislike-button" type="submit" name="action" value="dislike">
+                        <i class="fa fa-thumbs-down"></i>
+                    </button>
+                    {% endif %}
+                </div>
+            </form>
+            <form method="post" action="{{ url_for('views.subscribe') }}">
+                <div id="video-buttons">
+                    {% if subscribed %}
+                    <button class="subscribe-btn active" id="subscribe-button" type="submit" name="action"
+                        value="subscribe">
+                        SUBSCRIBED
+                    </button>
+                    {% else %}
+                    <button class="subscribe-btn" id="subscribe-button" type="submit" name="action" value="subscribe">
+                        SUBSCRIBE
+                    </button>
+                    {% endif %}
+                </div>
+            </form>
         </div>
 
         <div id="side-panel">
@@ -73,14 +110,14 @@
                     <a href="{{ url_for('views.video', video_id=video.videoId) }}">
                         <div class="suggestion-box">
                             <div class="suggestion-thumbnail">
-                                <img src="{{ video.thumbnails.default.url }}" alt="Video Thumbnail">
+                                <img src="{{ video.thumbnails.default.url }}" alt="Video Thumbnail" />
                             </div>
                             <div class="suggestion-details">
                                 <div class="suggestion-title">{{ video.title }}</div>
                                 <div class="suggestion-description">
                                     {% set description_text = video.description[:100] + '...' if
-                                    video.description|length > 100 else video.description %}
-                                    {{ description_text }}
+                                    video.description|length > 100 else video.description %} {{
+                                    description_text }}
                                 </div>
                             </div>
                         </div>
@@ -92,63 +129,83 @@
     </div>
 
     <script>
-        const likeButton = document.getElementById('like-button');
-        const dislikeButton = document.getElementById('dislike-button');
-        const subscribeButton = document.getElementById('subscribe-button');
-        const bellIconButton = document.getElementById('bell-icon-button');
+        $(document).ready(function () {
+            $('.vote-btn').click(function (e) {
+                e.preventDefault();
+                var action = $(this).attr('value');
+                var video_id = {{ video_id|tojson }};
+        // console.log(action, video_id)
+        var data = {
+            'action': action,
+            'video_id': video_id
+        };
+        // console.log(data);
 
-        let likeActive = false;
-        let dislikeActive = false;
-        let subscribeActive = false;
-        let bellIconActive = false;
+        $.ajax({
+            type: 'POST',
+            url: `{{ url_for('views.like') }}`,
+            data: JSON.stringify(data),
+            contentType: "application/json;charset=UTF-8",
+            success: function (response) {
+                var likeButtonElement = document.getElementById('like-button');
+                var dislikeButtonElement = document.getElementById('dislike-button');
 
-        function toggleButtonState(button, isActive) {
-            if (isActive) {
-                button.classList.add('active');
-            } else {
-                button.classList.remove('active');
+                if (response.liked) {
+                    likeButtonElement.classList.add('active');
+                    dislikeButtonElement.classList.remove('active');
+                } else if (response.disliked) {
+                    dislikeButtonElement.classList.add('active');
+                    likeButtonElement.classList.remove('active');
+                } else {
+                    likeButtonElement.classList.remove('active');
+                    dislikeButtonElement.classList.remove('active');
+                }
+
+                var likeCountElement = document.getElementById('like-count');
+                likeCountElement.textContent = `Likes: ${response.likeCount}`;
+
+                var dislikeCountElement = document.getElementById('dislike-count');
+                dislikeCountElement.textContent = `Dislikes: ${response.dislikeCount}`;
+
+                // console.log(response.liked, response.disliked, response.likeCount, response.dislikeCount);
             }
-        }
+        });
+          });
+      });
+    </script>
 
-        function updateSubscribeButton() {
-            if (subscribeActive) {
-                subscribeButton.textContent = "SUBSCRIBED";
-                bellIconButton.style.display = "inline-block";
-            } else {
-                subscribeButton.textContent = "SUBSCRIBE";
-                bellIconButton.style.display = "none";
+    <script>
+       $(document).ready(function () {
+            $('.subscribe-btn').click(function (e) {
+                e.preventDefault();
+                var action = $(this).attr('value');
+                var video_id = {{ video_id|tojson }};
+        // console.log(action, video_id)
+        var data = {
+            'action': action,
+            'video_id': video_id
+        };
+        // console.log(data);
+
+        $.ajax({
+            type: 'POST',
+            url: `{{ url_for('views.subscribe') }}`,
+            data: JSON.stringify(data),
+            contentType: "application/json;charset=UTF-8",
+            success: function (response) {
+                var subscribeButtonElement = document.getElementById('subscribe-button');
+                if (response.subscribed) {
+                    subscribeButtonElement.classList.add('active');
+                    subscribeButtonElement.textContent = 'SUBSCRIBED';
+                } else {
+                    subscribeButtonElement.classList.remove('active');
+                    subscribeButtonElement.textContent = 'SUBSCRIBE';
+                }
+                // console.log(response.subscribed)
             }
-        }
-
-        likeButton.addEventListener('click', function () {
-            likeActive = !likeActive;
-            dislikeActive = false;
-            toggleButtonState(likeButton, likeActive);
-            toggleButtonState(dislikeButton, dislikeActive);
         });
-
-        dislikeButton.addEventListener('click', function () {
-            dislikeActive = !dislikeActive;
-            likeActive = false;
-            toggleButtonState(likeButton, likeActive);
-            toggleButtonState(dislikeButton, dislikeActive);
-        });
-
-        subscribeButton.addEventListener('click', function () {
-            subscribeActive = !subscribeActive;
-            bellIconActive = false;
-
-            toggleButtonState(subscribeButton, subscribeActive);
-            toggleButtonState(bellIconButton, bellIconActive);
-
-            updateSubscribeButton();
-        });
-
-        bellIconButton.addEventListener('click', function () {
-            bellIconActive = !bellIconActive;
-
-            toggleButtonState(bellIconButton, bellIconActive);
-        });
+          });
+      });
     </script>
 </body>
 

@@ -29,5 +29,14 @@ class Like(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer)
     video_id = db.Column(db.String(150))
-    timestamp = db.Column(db.DateTime(timezone=True), default=func.now())
+    # like_status = db.Column(db.String(150))
     like_status = db.Column(db.Integer)
+    timestamp = db.Column(db.DateTime(timezone=True), default=func.now())
+
+
+class Subscribe(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer)
+    channel_id = db.Column(db.String(150))
+    subscribe_status = db.Column(db.Integer)
+    timestamp = db.Column(db.DateTime(timezone=True), default=func.now())
