@@ -28,6 +28,9 @@ def search():
     if request.method == 'POST':
         search_query = request.form.get('search_query')
         if search_query:
+            new_search_query = SearchQuery(user_id=current_user.id, query=search_query)
+            db.session.add(new_search_query)
+            db.session.commit()
             mongo_handler = MongoDBHandler(url="localhost", port=27017, db_name="testdb", collection_name="videos")
             search_results = mongo_handler.search(search_query=search_query)
         if search_results:
