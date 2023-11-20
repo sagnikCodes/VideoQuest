@@ -449,7 +449,28 @@ class Neo4jHandler(object):
                 max_relation_score = relation_score
                 most_related_user_id = user_id
         return most_related_user_id
+    
+    def train_for_next_video(self, click_through_data):
+        from sklearn.ensemble import RandomForestClassifier
+        import joblib
+        import numpy as np
+        X_train = click_through_data.loc[:, ["user_id", "current_video_id"]].values
+        y_train = click_through_data.loc[:, ["next_video_id"]].values
+        rf_classifier = RandomForestClassifier(n_estimators=100, random_state=42)
+        rf_classifier.fit(np.array(X_train), np.array(y_train))
+        joblib.dump(rf_classifier, 'random_forest_model.joblib')
 
+    def get_next_video_prediction(self, current_video_id):
+        import joblib
+        import numpy as np
+        user_id = current_user.id
+        rf_classifier = joblib.load('random_forest_model.joblib')
+        input_data = np.array([user_id, current_video_id])
+        next_video_predicted = rf_classifier.predict(input_data)
+        return next_video_predicted
+
+
+# Utility functions
 def update_users_data(user_id, property_name, property_value):
     with open("users.json", "r") as file:
         users = json.load(file)
