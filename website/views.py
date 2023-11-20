@@ -4,7 +4,7 @@ from flask import request
 from flask import jsonify
 from .mongodb_models import MongoDBHandler
 from .neo4j_models import Neo4jHandler, User as Neo4jUser
-from .mysql_models import User, SearchQuery, NextVideo, Like, Subscribe
+from .mysql_models import SearchQuery, NextVideo, Like, Subscribe
 from . import db
 from sys import stderr
 
@@ -81,8 +81,8 @@ def like():
         if action == 'like':
             neo4j_user.like(video_id=video_id)
 
-            prev_like_count = neo4j_handler.get_video_property(video_id=video_id, property_name='likes')
-            prev_dislike_count = neo4j_handler.get_video_property(video_id=video_id, property_name='dislikes')
+            # prev_like_count = neo4j_handler.get_video_property(video_id=video_id, property_name='likes')
+            # prev_dislike_count = neo4j_handler.get_video_property(video_id=video_id, property_name='dislikes')
             
             user_metadata = neo4j_user.get_metadata(video_id=video_id)
             liked = user_metadata['liked']
@@ -91,19 +91,18 @@ def like():
             like_count = neo4j_handler.get_video_property(video_id=video_id, property_name='likes')
             dislike_count = neo4j_handler.get_video_property(video_id=video_id, property_name='dislikes')
     
-            like_state = 'l+' if prev_like_count < like_count else 'l-' if prev_like_count > like_count else ''
-            dislike_state = 'd+' if prev_dislike_count < dislike_count else 'd-' if prev_dislike_count > dislike_count else ''
-            overall_like_state = like_state + dislike_state
-            
-            like_status = ''
-            if 'l+' in overall_like_state:
-                like_status = 'liked'
-            elif 'd+' in overall_like_state:
-                like_status = 'disliked'
-            elif overall_like_state == 'l-':
-                like_status = 'removed like'
-            elif overall_like_state == 'd-':
-                like_status = 'removed dislike'
+            # like_state = 'l+' if prev_like_count < like_count else 'l-' if prev_like_count > like_count else ''
+            # dislike_state = 'd+' if prev_dislike_count < dislike_count else 'd-' if prev_dislike_count > dislike_count else ''
+            # overall_like_state = like_state + dislike_state
+            # like_status = ''
+            # if 'l+' in overall_like_state:
+            #     like_status = 'liked'
+            # elif 'd+' in overall_like_state:
+            #     like_status = 'disliked'
+            # elif overall_like_state == 'l-':
+            #     like_status = 'removed like'
+            # elif overall_like_state == 'd-':
+            #     like_status = 'removed dislike'
 
             like_status = 1
             new_like = Like(user_id=current_user.id, video_id=video_id, like_status=like_status)
@@ -117,8 +116,8 @@ def like():
         elif action == 'dislike':
             neo4j_user.dislike(video_id=video_id)
 
-            prev_like_count = neo4j_handler.get_video_property(video_id=video_id, property_name='likes')
-            prev_dislike_count = neo4j_handler.get_video_property(video_id=video_id, property_name='dislikes')
+            # prev_like_count = neo4j_handler.get_video_property(video_id=video_id, property_name='likes')
+            # prev_dislike_count = neo4j_handler.get_video_property(video_id=video_id, property_name='dislikes')
             
             user_metadata = neo4j_user.get_metadata(video_id=video_id)
             liked = user_metadata['liked']

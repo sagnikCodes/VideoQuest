@@ -53,7 +53,7 @@
 
     <div class="main-container">
         <div id="video-panel">
-            <h2>Current Video</h2>
+            <h2>{{ current_video_data.title }}</h2>
             <div id="video-container">
                 <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ video_id }}" frameborder="0"
                     allowfullscreen="true"></iframe>
@@ -100,6 +100,10 @@
                     {% endif %}
                 </div>
             </form>
+
+            <p>
+                {{ current_video_data.description  }}
+            </p>
         </div>
 
         <div id="side-panel">
