@@ -175,3 +175,20 @@ def subscribe():
             return jsonify({'status': 'success', 'message': 'Request successful.', 'subscribed': subscribed})
         
     return jsonify({"message": "Invalid request."})
+
+
+@views.route('/next_video', methods=['GET', 'POST'])
+@login_required
+def next_video():
+    if request.method == 'POST':
+        data = request.get_json()
+        current_video_id = data['current_video_id']
+        next_video_id = data['next_video_id']
+
+        new_next_video = NextVideo(user_id=current_user.id, current_video_id=current_video_id, next_video_id=next_video_id)
+        db.session.add(new_next_video)
+        db.session.commit()
+
+        return jsonify({'status': 'success', 'message': 'Request successful.'})
+    
+    return jsonify({"message": "Invalid request."})

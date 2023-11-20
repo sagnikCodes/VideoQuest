@@ -110,7 +110,7 @@
             <h2>Video Suggestions</h2>
             <ul id="suggested-videos">
                 {% for video in suggested_videos %}
-                <li class="suggestion-link">
+                <li class="suggestion-link" data-video-id="{{ video.videoId }}">
                     <a href="{{ url_for('views.video', video_id=video.videoId) }}">
                         <div class="suggestion-box">
                             <div class="suggestion-thumbnail">
@@ -210,6 +210,33 @@
         });
           });
       });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+        $('.suggestion-link').click(function (e) {
+            e.preventDefault();
+            var nextVideoId = $(this).attr('data-video-id');
+            var currentVideoId = {{ video_id|tojson }};
+            var data = {
+                'current_video_id': currentVideoId,
+                'next_video_id': nextVideoId
+            };
+            console.log(data);
+
+            $.ajax({
+                type: 'POST',
+                url: `{{ url_for('views.next_video') }}`,
+                data: JSON.stringify(data),
+                contentType: "application/json;charset=UTF-8",
+                success: function (response) {
+                    console.log(response);
+                }
+            });
+
+            window.location.href = $(this).find('a').attr('href');
+        });
+    });
     </script>
 </body>
 
