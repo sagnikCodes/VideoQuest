@@ -113,18 +113,26 @@ class Neo4jHandler(object):
     def create_user_subscribed_channel_relationship(self, user_id, channel_id):
         user_node = self.graph.nodes.match("USER", user_id=user_id).first() or Node("USER", user_id=user_id)
         channel_node = self.graph.nodes.match("CHANNEL", channel_id=channel_id).first()
+        if(self.is_already_subscribed(user_id, channel_id)):
+            self.remove_subscribed_relationship(user_id, channel_id)
+            return
         user_subsribed_channel_relationship = Relationship(user_node, "SUBSCRIBED", channel_node)
         self.graph.create(user_subsribed_channel_relationship)
-            
-    def create_user_hit_bell_icon_relationship(self, user_id, channel_id):
-        user_node = self.graph.nodes.match("USER", user_id=user_id).first()
-        channel_node = self.graph.nodes.match("CHANNEL", channel_id=channel_id).first()
-        user_hit_bell_icon_relationship = Relationship(user_node, "HIT_BELL_ICON", channel_node)
-        self.graph.create(user_hit_bell_icon_relationship)
         
     def create_user_liked_video_relationship(self, user_id, video_id):
         user_node = self.graph.nodes.match("USER", user_id=user_id).first()
         video_node = self.graph.nodes.match("VIDEO", video_id=video_id).first()
+        if(self.is_already_liked(user_id, video_id)):
+            self.remove_like_relationship(user_id, video_id)
+            return
+        if(self.is_already_disliked(user_id, video_id)):
+            self.remove_dislike_relationship(user_id, video_id)
+            query = (
+                f"MATCH (video:VIDEO {{video_id: '{video_id}'}}) "
+                "SET video.dislikes = video.dislikes - 1"
+            )
+            self.graph.run(query)
+
         user_liked_video_relationship = Relationship(user_node, "LIKED", video_node)
         self.graph.create(user_liked_video_relationship)
         query = (
@@ -136,6 +144,17 @@ class Neo4jHandler(object):
     def create_user_disliked_video_relationship(self, user_id, video_id):
         user_node = self.graph.nodes.match("USER", user_id=user_id).first()
         video_node = self.graph.nodes.match("VIDEO", video_id=video_id).first()
+        if(self.is_already_disliked(user_id, video_id)):
+            self.remove_dislike_relationship(user_id, video_id)
+            return
+        if(self.is_already_liked(user_id, video_id)):
+            self.remove_like_relationship(user_id, video_id)
+            query = (
+                f"MATCH (video:VIDEO {{video_id: '{video_id}'}}) "
+                "SET video.likes = video.likes - 1"
+            )
+            self.graph.run(query)
+
         user_disliked_video_relationship = Relationship(user_node, "DISLIKED", video_node)
         self.graph.create(user_disliked_video_relationship)
         query = (
@@ -188,6 +207,54 @@ class Neo4jHandler(object):
         channel_id = self.__get_video_property(video_id, "channel")
         query = (
             f"MATCH (user:USER {{user_id: '{user_id}'}})-[r:{relationship}]-(channel:CHANNEL {{channel_id: '{channel_id}'}}) "
+            f"RETURN COUNT(r) > 0"
+        )
+
+        return self.graph.evaluate(query)
+    
+    def remove_like_relationship(self, user_id, video_id):
+        query = (
+            f"MATCH (:USER {{user_id: '{user_id}'}})-[r:LIKED]-(:VIDEO {{video_id: '{video_id}'}}) "
+            f"DELETE r"
+        )
+
+        self.graph.run(query)
+
+    def remove_dislike_relationship(self, user_id, video_id):
+        query = (
+            f"MATCH (:USER {{user_id: '{user_id}'}})-[r:DISLIKED]-(:VIDEO {{video_id: '{video_id}'}}) "
+            f"DELETE r"
+        )
+
+        self.graph.run(query)
+
+    def remove_subscribed_relationship(self, user_id, channel_id):
+        query = (
+            f"MATCH (:USER {{user_id: '{user_id}'}})-[r:SUBSCRIBED]-(:CHANNEL {{channel_id: '{channel_id}'}}) "
+            f"DELETE r"
+        )
+
+        self.graph.run(query)
+
+    def is_already_liked(self, user_id, video_id):
+        query = (
+            f"MATCH (:USER {{user_id: '{user_id}'}})-[r:LIKED]-(:VIDEO {{video_id: '{video_id}'}}) "
+            f"RETURN COUNT(r) > 0"
+        )
+
+        return self.graph.evaluate(query)
+    
+    def is_already_disliked(self, user_id, video_id):
+        query = (
+            f"MATCH (:USER {{user_id: '{user_id}'}})-[r:DISLIKED]-(:VIDEO {{video_id: '{video_id}'}}) "
+            f"RETURN COUNT(r) > 0"
+        )
+
+        return self.graph.evaluate(query)
+
+    def is_already_subscribed(self, user_id, channel_id):
+        query = (
+            f"MATCH (:USER {{user_id: '{user_id}'}})-[r:SUBSCRIBED]-(:CHANNEL {{channel_id: '{channel_id}'}}) "
             f"RETURN COUNT(r) > 0"
         )
 
@@ -250,13 +317,12 @@ class Neo4jHandler(object):
         try:
             user_data = user_cache[user_id]
         except KeyError:
-            user_data = {"liked": [], "disliked": [], "subscribed": [], "hit_bell_icon": []}
+            user_data = {"liked": [], "disliked": [], "subscribed": []}
         
         video_data = individual_cache[video_id]
         video_is_liked = 0
         video_is_disliked = 0
         videos_channel_is_subsribed = 0
-        videos_channel_bell_icon_hit = 0
         channel_id = self.__get_video_property(video_id, "channel")
 
         for liked_video_id in user_data["liked"]:
@@ -274,11 +340,6 @@ class Neo4jHandler(object):
                 videos_channel_is_subsribed = 1
                 break
 
-        for hit_bell_icon_channel_id in user_data["hit_bell_icon"]:
-            if hit_bell_icon_channel_id == channel_id:
-                videos_channel_bell_icon_hit = 1
-                break
-
         weightage_likes = 1
         weightage_dislikes = -2
         weightage_views = 3
@@ -289,7 +350,6 @@ class Neo4jHandler(object):
         weightage_liked_video = 2
         weightage_disliked_video = -2
         weightage_subsribed_channel_of_video = 2
-        weightage_hit_bell_icon_of_video = 3
 
         relation_data = relations_cache[current_video_id][video_id]
         
@@ -299,8 +359,7 @@ class Neo4jHandler(object):
             weightage_num_common_words_title * relation_data["num_common_words_title"] + \
             weightage_num_common_tags * relation_data["num_common_tags"] + \
             weightage_liked_video * video_is_liked + weightage_disliked_video * video_is_disliked + \
-            weightage_subsribed_channel_of_video * videos_channel_is_subsribed + \
-            weightage_hit_bell_icon_of_video * videos_channel_bell_icon_hit
+            weightage_subsribed_channel_of_video * videos_channel_is_subsribed
         return score
 
     def get_score_wrt_current_video(self, current_video_id):
@@ -320,12 +379,32 @@ class Neo4jHandler(object):
         return top_5_videos
 
 
-def push_data_to_users(user_id, property_name, property_value):
+def update_users_data(user_id, property_name, property_value):
     with open("users.json", "r") as file:
         users = json.load(file)
-    users[user_id][property_name].append(property_value)
+    flag = False
+    if(property_name == "liked"):
+        if property_value in users[user_id]["disliked"]:
+            users[user_id]["disliked"].remove(property_value)
+        if property_value in users[user_id]["liked"]:
+            users[user_id]["liked"].remove(property_value)
+            flag = True
+    elif(property_name == "disliked"):
+        if property_value in users[user_id]["liked"]:
+            users[user_id]["liked"].remove(property_value)
+        if property_value in users[user_id]["disliked"]:
+            users[user_id]["disliked"].remove(property_value)
+            flag = True
+    elif(property_name == "subscribed"):
+        if property_value in users[user_id]["subscribed"]:
+            users[user_id]["subscribed"].remove(property_value)
+            flag = True
+    
+    if flag == False:
+        users[user_id][property_name].append(property_value)
     with open("users.json", "w") as file:
         json.dump(users, file)
+    return flag
 
 
 def update_like_in_cache(video_id):
@@ -360,28 +439,26 @@ class User(Neo4jHandler):
 
     # All the methods for User-Channel relationship
     def subscribe(self, channel_id):
-        push_data_to_users(self.user_id, "subscribed", channel_id)
+        update_users_data(self.user_id, "subscribed", channel_id)
         self.create_user_subscribed_channel_relationship(self.user_id, channel_id)
-        
-    def hit_bell_icon(self, channel_id):
-        push_data_to_users(self.user_id, "hit_bell_icon", channel_id)
-        self.create_user_hit_bell_icon_relationship(self.user_id, channel_id)
         
     # All the methods for User-Video relationship
     def like(self, video_id):
-        push_data_to_users(self.user_id, "liked", video_id)
-        update_like_in_cache(video_id)
+        is_already_liked = update_users_data(self.user_id, "liked", video_id)
+        if not is_already_liked:
+            update_like_in_cache(video_id)
         self.create_user_liked_video_relationship(self.user_id, video_id)
     
     def dislike(self, video_id):
-        push_data_to_users(self.user_id, "disliked", video_id)
-        update_dislike_in_cache(video_id)
+        is_already_disliked = update_users_data(self.user_id, "disliked", video_id)
+        if not is_already_disliked:
+            update_dislike_in_cache(video_id)
         self.create_user_disliked_video_relationship(self.user_id, video_id)
 
 
 def main():
     neo4j = Neo4jHandler(uri="bolt://localhost:7687", username="neo4j", password="password")
-    # neo4j.create_initial_graph()
+    neo4j.create_initial_graph()
     neo4j.get_relationships_meta_data()
 
 

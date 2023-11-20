@@ -1,81 +1,196 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video Search Engine</title>
-
-    <!-- Include Bootstrap stylesheet -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
-    <style>
-        body {
-            padding-top: 56px; /* Adjust based on the height of your navbar */
-        }
-
-        .main-content {
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-radius: 5px;
-            margin-top: 20px;
-        }
-
-        .youtube-images img {
-            width: 100%;
-            max-width: 100%;
-            height: auto;
-        }
-    </style>
+    <title>VideoQuest</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+  />
+    
+    <link rel="icon" href="{{url_for('static', filename='logo.png')}}">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&family=Open+Sans:wght@300;600&family=Raleway:wght@300&family=Roboto+Mono:wght@200&family=Syne&display=swap" rel="stylesheet">
+     <script src="https://kit.fontawesome.com/77d82db749.js" crossorigin="anonymous"></script>
+     <link rel="stylesheet" href="{{url_for('static', filename='index.css')}}">
+
 </head>
 <body>
-    <!-- Navigation bar with Bootstrap styling -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-        <a class="navbar-brand" href="#">Video Search Engine</a>
+    <header>
+        <div id="line"></div>
+        
+    </header>
+   
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div id="siteName">
+            <img src="{{url_for('static', filename='logo.png')}}">
+            <h3>VideoQuest</h3>
+            
+        </div>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
                 {% if user.is_authenticated %}
-                <li class="nav-item active">
+                <li class="nav-item active mr-3 font-weight-bold">
                     <a class="nav-link" href="{{ url_for('views.home') }}">Home</a>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item nav-btn">
                     <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
                 </li>
                 {% else %}
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('auth.signup') }}">Signup</a>
-                </li>
-                <li class="nav-item">
+                <li class="nav-item nav-btn mr-2">
                     <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+                </li>
+                <li class="nav-item nav-btn">
+                    <a class="nav-link" href="{{ url_for('auth.signup') }}">Signup</a>
                 </li>
                 {% endif %}
             </ul>
         </div>
     </nav>
-
-    <!-- Page content -->
-    <div class="container mt-5 main-content">
-        <h1 class="mb-4">Video Search Engine</h1>
-        <p>This is a video search engine. Welcome to our platform where you can discover and explore a wide variety of videos.</p>
-    </div>
-
-    <!-- Two YouTube images side by side -->
-    <div class="container mt-4 youtube-images">
-        <div class="row">
-            <div class="col-md-6">
-                <a href="https://pureinfotech.com/wp-content/uploads/2023/05/windows-11-install-youtube-app-hero.webp" target="_blank">
-                    <img src="https://pureinfotech.com/wp-content/uploads/2023/05/windows-11-install-youtube-app-hero.webp" alt="YouTube Image 1">
-                </a>
+    <section id="main-container">
+      <div id="intro">
+        <h2>Anytime.</h2>
+        <h2>Anywhere.</h2>
+        <h2>Your Video Symphony.</h2>
+        <p>Welcome to Our Platform, Unlock a world of video discovery where endless exploration awaits your every click.</p>
+      </div>
+    </section>
+    <section id="image-container">
+        
+    </section>
+    
+    <section id="famous-temples">
+        <h2>Explore Videos</h2>
+        
+        <div class="container container2 text-center my-3">
+            
+            <div class="row mx-auto my-auto">
+                <div id="recipe3Carousel" class="carousel slide w-100" data-ride="carousel">
+                    <div class="carousel-inner w-100" role="listbox">
+                        <div class="carousel-item active">
+                            <div class="col-md-6">
+                                <div class="card card-body">
+                                    <div class="temple-box">
+                                        <img class="img-fluid" src="{{url_for('static', filename='scroll1.png')}}">
+                                       
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="col-md-6">
+                                <div class="card card-body">
+                                    <div class="temple-box">
+                                        <img class="img-fluid" src="{{url_for('static', filename='scroll1.png')}}">
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="col-md-6">
+                                <div class="card card-body">
+                                    <div class="temple-box">
+                                        <img class="img-fluid" src="{{url_for('static', filename='scroll1.png')}}">
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                       
+                        
+                        
+                    </div>
+                    <a class="carousel-control-prev w-auto" href="#recipe3Carousel" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon bg-dark border border-dark rounded-circle" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="carousel-control-next w-auto" href="#recipe3Carousel" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon bg-dark border border-dark rounded-circle" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
             </div>
-            <div class="col-md-6">
-                <a href="https://www.kapwing.com/resources/content/images/2021/02/Screen-Shot-2021-02-02-at-2.17.11-PM.png" target="_blank">
-                    <img src="https://www.kapwing.com/resources/content/images/2021/02/Screen-Shot-2021-02-02-at-2.17.11-PM.png" alt="YouTube Image 2">
-                </a>
+          
+        </div>
+
+
+    </section>
+    <section id="about">
+        <div id="left">
+            <h3>Exploring the Essence of Infinite Videos...</h3>
+            <div id="para">
+                <p>Welcome to VideoQuest, where our passion lies in uncovering the diverse world of videos. We are a dedicated community of seekers, curators, and visual enthusiasts, driven by the belief that every video holds a unique narrative waiting to be discovered. Our mission is to provide you with a seamless platform for exploring videos, offering a glimpse of their creativity, diversity, and the experiences they offer.</p>
+             
+                <p>Our team of seasoned curators and video aficionados collaborates to bring you comprehensive insights, engaging content, and essential information about videos from across the digital landscape. We believe that empowering users to explore and appreciate the richness of video content enhances their viewing experiences and deepens their connection with the ever-expanding world of visual storytelling.</p>
+                <p>VideoQuest is your go-to destination for discovering and enjoying the vast array of videos. Join us on this journey, and together, let's navigate the boundless universe of visual exploration.</p>
             </div>
         </div>
-    </div>
+        <div id="right">
+            <img src="{{url_for('static', filename='videoabout.png')}}">
+        </div>
+        
+    </section>
+    
+    
+    <section id="blog">
+        <div id="left">
+            <img src="{{url_for('static', filename='blog.png')}}">
+        </div>
+        <div id="right">
+                <h3>Discover Infinite Videos</h3>
+                <h6>Truly Exceptional</h6>
+                <p>At VideoQuest, our mission is to make video exploration effortless. Our platform takes you deep into the world of videos, providing a seamless search experience. Beyond powerful search capabilities, you'll find a community of enthusiasts sharing their favorite video discoveries. With VideoQuest, your journey into the world of videos is streamlined and enlightening, connecting you with the most compelling content on the web.</p>
+
+        </div>
+        
+    </section>
+  
+    
+    
+    <footer>
+        <div id="footersiteName">
+            <img src="{{url_for('static', filename='logo.png')}}">
+            <h3>VideoQuest</h3>
+        </div>
+       
+        <p>©2023 by VideoQuest. All rights reserved.</p>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script>
+        $('#recipe3Carousel').carousel({
+            interval: 1500
+        
+        })
+
+        $('.carousel .carousel-item').each(function(){
+        var minPerSlide = 3;
+        var next = $(this).next();
+        if (!next.length) {
+        next = $(this).siblings(':first');
+        }
+        next.children(':first-child').clone().appendTo($(this));
+        
+        for (var i=0;i<minPerSlide;i++) {
+            next=next.next();
+            if (!next.length) {
+                next = $(this).siblings(':first');
+                }
+            
+            next.children(':first-child').clone().appendTo($(this));
+            }
+        });
+    </script>
 </body>
 </html>
