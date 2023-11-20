@@ -122,7 +122,7 @@ class Neo4jHandler(object):
         
     def create_user_liked_video_relationship(self, user_id, video_id):
         user_id = int(user_id)
-        user_node = self.graph.nodes.match("USER", user_id=user_id).first()
+        user_node = self.graph.nodes.match("USER", user_id=user_id).first() or Node("USER", user_id=user_id)
         video_node = self.graph.nodes.match("VIDEO", video_id=video_id).first()
         if(self.is_already_liked(user_id, video_id)):
             self.remove_like_relationship(user_id, video_id)
@@ -150,7 +150,7 @@ class Neo4jHandler(object):
     
     def create_user_disliked_video_relationship(self, user_id, video_id):
         user_id = int(user_id)
-        user_node = self.graph.nodes.match("USER", user_id=user_id).first()
+        user_node = self.graph.nodes.match("USER", user_id=user_id).first() or Node("USER", user_id=user_id)
         video_node = self.graph.nodes.match("VIDEO", video_id=video_id).first()
         if(self.is_already_disliked(user_id, video_id)):
             self.remove_dislike_relationship(user_id, video_id)
