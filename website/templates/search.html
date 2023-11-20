@@ -31,8 +31,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item active">
-                    <a class="nav-link" href="#">About</a#
-                </li>
+                    <a class="nav-link" href="#">About</a# </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Contact</a>
                 </li>
@@ -57,48 +56,29 @@
         </div>
     </div>
 
-    <script>
-        const searchResults = {{ search_results| tojson | safe}};
-
-        const searchResultsPanel = document.getElementById("search-results-panel");
-        searchResultsPanel.innerHTML = "";
-
-        searchResults.forEach((result) => {
-            const resultBox = document.createElement("div");
-            resultBox.classList.add("suggestion-box");
-
-            const thumbnail = document.createElement("div");
-            thumbnail.classList.add("suggestion-thumbnail");
-            const thumbnailImage = document.createElement("img");
-            thumbnailImage.src = result.thumbnails.default.url;
-            thumbnail.appendChild(thumbnailImage);
-
-            const details = document.createElement("div");
-            details.classList.add("suggestion-details");
-
-            const title = document.createElement("div");
-            title.classList.add("suggestion-title");
-            title.textContent = result.title;
-
-            const description = document.createElement("div");
-            description.classList.add("suggestion-description");
-            let descriptionText = result.description;
-            if (descriptionText.length > 100) {
-                descriptionText = descriptionText.substring(0, 100) + "...";
-            }
-            description.textContent = descriptionText;
-
-            details.appendChild(title);
-            details.appendChild(description);
-            resultBox.appendChild(thumbnail);
-            resultBox.appendChild(details);
-
-            searchResultsPanel.appendChild(resultBox);
-        });
-
-
-
-    </script>
+    <div id="side-panel">
+        <ul id="suggested-videos">
+            {% for video in search_results %}
+            <li class="suggestion-link">
+                <a href="{{ url_for('views.video', video_id=video.videoId) }}">
+                    <div class="suggestion-box">
+                        <div class="suggestion-thumbnail">
+                            <img src="{{ video.thumbnails.default.url }}" alt="Video Thumbnail">
+                        </div>
+                        <div class="suggestion-details">
+                            <div class="suggestion-title">{{ video.title }}</div>
+                            <div class="suggestion-description">
+                                {% set description_text = video.description[:100] + '...' if
+                                video.description|length > 100 else video.description %}
+                                {{ description_text }}
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
 </body>
 
 </html>

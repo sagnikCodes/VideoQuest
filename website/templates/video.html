@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Video Search Engine</title>
 
-    <!-- Include Bootstrap stylesheet -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href='https://fonts.googleapis.com/css?family=Lexend' rel='stylesheet'>
 
-    <script src="{{url_for('static', filename='scripts.js')}}"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
 
     <script>
@@ -21,11 +20,12 @@
         }
     </script>
 </head>
+
 <body>
-    <!-- Navigation bar with Bootstrap styling -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#">Video Search Engine</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
@@ -41,15 +41,20 @@
         </div>
     </nav>
 
-    <div class="search-container">
-        <input type="text" id="search-bar" placeholder="Search">
-        <button type="submit"><i class="fa fa-search"></i></button>
-    </div>
+    <form action="{{ url_for('views.search') }}" method="POST">
+        <div class="search-container">
+            <input type="text" name="search_query" id="search-bar" placeholder="Search" value="">
+            <button type="submit"><i class="fa fa-search"></i></button>
+        </div>
+    </form>
 
     <div class="main-container">
         <div id="video-panel">
             <h2>Current Video</h2>
-            <div id="video-container"></div>
+            <div id="video-container">
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ video_id }}" frameborder="0"
+                    allowfullscreen="true"></iframe>
+            </div>
 
             <div id="video-buttons" class="hidden">
                 <button id="like-button"><i class="fa fa-thumbs-up"></i></button>
@@ -63,8 +68,88 @@
         <div id="side-panel">
             <h2>Video Suggestions</h2>
             <ul id="suggested-videos">
+                {% for video in suggested_videos %}
+                <li class="suggestion-link">
+                    <a href="{{ url_for('views.video', video_id=video.videoId) }}">
+                        <div class="suggestion-box">
+                            <div class="suggestion-thumbnail">
+                                <img src="{{ video.thumbnails.default.url }}" alt="Video Thumbnail">
+                            </div>
+                            <div class="suggestion-details">
+                                <div class="suggestion-title">{{ video.title }}</div>
+                                <div class="suggestion-description">
+                                    {% set description_text = video.description[:100] + '...' if
+                                    video.description|length > 100 else video.description %}
+                                    {{ description_text }}
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+                {% endfor %}
             </ul>
         </div>
     </div>
+
+    <script>
+        const likeButton = document.getElementById('like-button');
+        const dislikeButton = document.getElementById('dislike-button');
+        const subscribeButton = document.getElementById('subscribe-button');
+        const bellIconButton = document.getElementById('bell-icon-button');
+
+        let likeActive = false;
+        let dislikeActive = false;
+        let subscribeActive = false;
+        let bellIconActive = false;
+
+        function toggleButtonState(button, isActive) {
+            if (isActive) {
+                button.classList.add('active');
+            } else {
+                button.classList.remove('active');
+            }
+        }
+
+        function updateSubscribeButton() {
+            if (subscribeActive) {
+                subscribeButton.textContent = "SUBSCRIBED";
+                bellIconButton.style.display = "inline-block";
+            } else {
+                subscribeButton.textContent = "SUBSCRIBE";
+                bellIconButton.style.display = "none";
+            }
+        }
+
+        likeButton.addEventListener('click', function () {
+            likeActive = !likeActive;
+            dislikeActive = false;
+            toggleButtonState(likeButton, likeActive);
+            toggleButtonState(dislikeButton, dislikeActive);
+        });
+
+        dislikeButton.addEventListener('click', function () {
+            dislikeActive = !dislikeActive;
+            likeActive = false;
+            toggleButtonState(likeButton, likeActive);
+            toggleButtonState(dislikeButton, dislikeActive);
+        });
+
+        subscribeButton.addEventListener('click', function () {
+            subscribeActive = !subscribeActive;
+            bellIconActive = false;
+
+            toggleButtonState(subscribeButton, subscribeActive);
+            toggleButtonState(bellIconButton, bellIconActive);
+
+            updateSubscribeButton();
+        });
+
+        bellIconButton.addEventListener('click', function () {
+            bellIconActive = !bellIconActive;
+
+            toggleButtonState(bellIconButton, bellIconActive);
+        });
+    </script>
 </body>
+
 </html>

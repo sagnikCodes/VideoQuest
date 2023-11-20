@@ -8,8 +8,10 @@ from flask_login import login_required, current_user
 import json
 
 client = MongoClient('localhost', 27017)
-db = client['test_database']
-collection = db['test_collection']
+# db = client['test_database']
+# collection = db['test_collection']
+db = client['testdb']
+collection = db['videos']
 videos_data = list(collection.find())
 # nltk.download('stopwords')
 english_stopwords = set(stopwords.words('english'))
@@ -48,15 +50,15 @@ class Neo4jHandler(object):
         
     def create_video_node(self, video_data):
         # We are storing each important information in video node so that accessing the relevant information is faster
-        video_id = video_data["videoInfo"]["id"]
-        likes = video_data["videoInfo"]["statistics"]["likeCount"]
-        dislikes = video_data["videoInfo"]["statistics"]["dislikeCount"]
-        views = video_data["videoInfo"]["statistics"]["viewCount"]
-        channel = video_data["videoInfo"]["snippet"]["channelId"]
-        title = video_data["videoInfo"]["snippet"]["title"]
-        description = video_data["videoInfo"]["snippet"]["description"]
+        video_id = video_data["videoId"]
+        likes = video_data["likeCount"]
+        dislikes = video_data["dislikeCount"]
+        views = video_data["viewCount"]
+        channel = video_data["channelId"]
+        title = video_data["title"]
+        description = video_data["description"]
         try:
-            tags = video_data["videoInfo"]["snippet"]["tags"]
+            tags = video_data["tags"]
         except:
             tags = []
         video_node = Node("VIDEO", video_id=video_id, likes=likes, dislikes=dislikes, views=views, channel=channel, tags=tags, title=title, description=description)
@@ -145,7 +147,7 @@ class Neo4jHandler(object):
     def create_initial_graph(self):
         for video_data in videos_data:
             self.create_video_node(video_data)
-        video_id_list = [video_data["videoInfo"]["id"] for video_data in videos_data]
+        video_id_list = [video_data["videoId"] for video_data in videos_data]
         num_videos = len(video_id_list)
         for i in range(num_videos):
             for j in range(num_videos):
@@ -194,7 +196,7 @@ class Neo4jHandler(object):
     def get_relation_with_other_videos(self, video_id_current):
         other_videos_meta_data = {}
         for video_data in videos_data:
-            video_id_other = video_data["videoInfo"]["id"]
+            video_id_other = video_data["videoId"]
             if(video_id_other == video_id_current):
                 continue
             
@@ -220,25 +222,37 @@ class Neo4jHandler(object):
     
     def get_relationships_meta_data(self):
         relationships_meta_data = {}
+        individual_meta_data = {}
         num_videos = 1
         import time
         start_time = time.time()
         for video_data in videos_data:
-            video_id_current = video_data["videoInfo"]["id"]
+            video_id_current = video_data["videoId"]
             relationships_meta_data[video_id_current] = self.get_relation_with_other_videos(video_id_current)
+            individual_meta_data[video_id_current] = {
+                "likes": self.__get_video_property(video_id_current, "likes"),
+                "dislikes": self.__get_video_property(video_id_current, "dislikes"),
+                "views": self.__get_video_property(video_id_current, "views"),
+            }
             print(f"Completed video {num_videos}")
             num_videos += 1
-        with open('cache.json', 'w') as file:
+
+        with open('relations.json', 'w') as file:
             json.dump(relationships_meta_data, file)
+
+        with open('individual.json', 'w') as file:
+            json.dump(individual_meta_data, file)
+
         end_time = time.time()
         print(f"Time taken : {end_time - start_time}")
     
-    def get_score(self, user_id, video_id, cache):
+    def get_score(self, user_id, current_video_id, video_id, individual_cache, relations_cache):
         try:
             user_data = user_cache[user_id]
         except KeyError:
             user_data = {"liked": [], "disliked": [], "subscribed": [], "hit_bell_icon": []}
-        video_data = cache[video_id]
+        
+        video_data = individual_cache[video_id]
         video_is_liked = 0
         video_is_disliked = 0
         videos_channel_is_subsribed = 0
@@ -276,18 +290,31 @@ class Neo4jHandler(object):
         weightage_disliked_video = -2
         weightage_subsribed_channel_of_video = 2
         weightage_hit_bell_icon_of_video = 3
-        score = weightage_likes * video_data["likes"] + weightage_dislikes * video_data["dislikes"] + weightage_views * video_data["views"] + weightage_same_channel * video_data["same_channel"] + weightage_num_common_words_description * video_data["num_common_words_description"] + weightage_num_common_words_title * video_data["num_common_words_title"] + weightage_num_common_tags * video_data["num_common_tags"] + weightage_liked_video * video_is_liked + weightage_disliked_video * video_is_disliked + weightage_subsribed_channel_of_video * videos_channel_is_subsribed + weightage_hit_bell_icon_of_video * videos_channel_bell_icon_hit
+
+        relation_data = relations_cache[current_video_id][video_id]
+        
+        score = weightage_likes * video_data["likes"] + weightage_dislikes * video_data["dislikes"] + \
+            weightage_views * video_data["views"] + weightage_same_channel * relation_data["same_channel"] + \
+            weightage_num_common_words_description * relation_data["num_common_words_description"] + \
+            weightage_num_common_words_title * relation_data["num_common_words_title"] + \
+            weightage_num_common_tags * relation_data["num_common_tags"] + \
+            weightage_liked_video * video_is_liked + weightage_disliked_video * video_is_disliked + \
+            weightage_subsribed_channel_of_video * videos_channel_is_subsribed + \
+            weightage_hit_bell_icon_of_video * videos_channel_bell_icon_hit
         return score
 
     def get_score_wrt_current_video(self, current_video_id):
-        with open('cache.json', 'r') as file:
-            cache = json.load(file)
-        relevant_videos = cache[current_video_id]
+        with open('relations.json', 'r') as file:
+            relations_cache = json.load(file)
+        with open('individual.json', 'r') as file:
+            individual_cache= json.load(file)
+        relevant_videos = relations_cache[current_video_id]
         user_id = current_user.id
         scores = []
         for video_id in relevant_videos:
-            score = self.get_score(user_id, video_id, cache)
-            scores.append([score, video_id])
+            if video_id != current_video_id:
+                score = self.get_score(user_id, current_video_id, video_id, individual_cache, relations_cache)
+                scores.append([score, video_id])
         top_5_scores = sorted(scores)[::-1][:5]
         top_5_videos = [video[1] for video in top_5_scores]
         return top_5_videos
@@ -302,26 +329,26 @@ def push_data_to_users(user_id, property_name, property_value):
 
 
 def update_like_in_cache(video_id):
-    with open("cache.json", "r") as file:
+    with open("individual.json", "r") as file:
         cache = json.load(file)
     cache[video_id]["likes"] += 1
-    with open("cache.json", "w") as file:
+    with open("individual.json", "w") as file:
         json.dump(cache, file)
 
 
 def update_dislike_in_cache(video_id):
-    with open("cache.json", "r") as file:
+    with open("individual.json", "r") as file:
         cache = json.load(file)
     cache[video_id]["dislikes"] += 1
-    with open("cache.json", "w") as file:
+    with open("individual.json", "w") as file:
         json.dump(cache, file)
 
 
 def update_views_in_cache(video_id):
-    with open("cache.json", "r") as file:
+    with open("individual.json", "r") as file:
         cache = json.load(file)
     cache[video_id]["views"] += 1
-    with open("cache.json", "w") as file:
+    with open("individual.json", "w") as file:
         json.dump(cache, file)
 
 
@@ -354,6 +381,7 @@ class User(Neo4jHandler):
 
 def main():
     neo4j = Neo4jHandler(uri="bolt://localhost:7687", username="neo4j", password="password")
+    # neo4j.create_initial_graph()
     neo4j.get_relationships_meta_data()
 
 

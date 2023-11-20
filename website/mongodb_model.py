@@ -24,6 +24,11 @@ class MongoDBHandler(object):
             self.__upload_data(data)
             file.close()
 
+    def  get_data(self, video_id):
+        result = self.collection.find_one({"videoId": video_id})
+        result['_id'] = str(result['_id'])
+        return result
+
     def search(self, search_query, search_threshold=0.85):
         '''
         we can make further changes for prioritizing the search results
@@ -70,11 +75,15 @@ if __name__ == '__main__':
     '''
 
     # demo search query
-    search_query = "manna dey"
-    result = mongo_handler.search(search_query)
+    # search_query = "manna dey"
+    # result = mongo_handler.search(search_query)
     
-    for document in result:
-        print(document['title'])
-        print(document['similarWords'])
-        print()
+    # for document in result:
+    #     print(document['title'])
+    #     print(document['similarWords'])
+    #     print()
+
+    # videoId = "-0ziqk9cZRM"
+    # result = mongo_handler.get_data(videoId)
+    # print(result)
 
