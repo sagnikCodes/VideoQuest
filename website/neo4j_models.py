@@ -305,10 +305,10 @@ class Neo4jHandler(object):
             num_videos += 1
 
         with open('relations.json', 'w') as file:
-            json.dump(relationships_meta_data, file)
+            json.dump(relationships_meta_data, file, indent=4)
 
         with open('individual.json', 'w') as file:
-            json.dump(individual_meta_data, file)
+            json.dump(individual_meta_data, file, indent=4)
 
         end_time = time.time()
         print(f"Time taken : {end_time - start_time}")
@@ -370,14 +370,85 @@ class Neo4jHandler(object):
         relevant_videos = relations_cache[current_video_id]
         user_id = current_user.id
         scores = []
+        weighage_most_related_user = 0.75
+        most_related_user_id = self.get_most_related_user(user_id)
         for video_id in relevant_videos:
             if video_id != current_video_id:
-                score = self.get_score(user_id, current_video_id, video_id, individual_cache, relations_cache)
+                score = self.get_score(user_id, current_video_id, video_id, individual_cache, relations_cache) + \
+                        weighage_most_related_user * self.get_score(most_related_user_id, current_video_id, video_id, individual_cache, relations_cache)
                 scores.append([score, video_id])
         top_5_scores = sorted(scores)[::-1][:5]
         top_5_videos = [video[1] for video in top_5_scores]
         return top_5_videos
+    
+    def get_count_of_common_liked_videos(self, user_id1, user_id2):
+        query = (
+            f"MATCH (:USER {{user_id: {user_id1}}})-[:LIKED]-> (video:VIDEO) "
+            f"MATCH (:USER {{user_id: {user_id2}}})-[:LIKED]-> (video) "
+            f"RETURN COUNT(video)"
+        )
 
+        return self.graph.evaluate(query)
+    
+    def get_count_of_common_disliked_videos(self, user_id1, user_id2):
+        query = (
+            f"MATCH (:USER {{user_id: {user_id1}}})-[:DISLIKED]-> (video:VIDEO) "
+            f"MATCH (:USER {{user_id: {user_id2}}})-[:DISLIKED]-> (video) "
+            f"RETURN COUNT(video)"
+        )
+
+        return self.graph.evaluate(query)
+    
+    def get_count_of_common_subscribed_channels(self, user_id1, user_id2):
+        query = (
+            f"MATCH (:USER {{user_id: {user_id1}}})-[:SUBSCRIBED]-> (channel:CHANNEL) "
+            f"MATCH (:USER {{user_id: {user_id2}}})-[:SUBSCRIBED]-> (channel) "
+            f"RETURN COUNT(channel)"
+        )
+
+        return self.graph.evaluate(query)
+    
+    def set_relationship_between_users(self):
+        with open("users.json", "r") as file:
+            users = json.load(file)
+        all_user_id = list(users.keys())
+        users_relation = {}
+        num_users = len(all_user_id)
+        for i in range(num_users):
+            ith_user_relation = {}
+            for j in range(num_users):
+                if(i == j):
+                    continue
+                jth_user_relation = {}
+                user_id1, user_id2 = all_user_id[i], all_user_id[j]
+                jth_user_relation["num_common_liked_videos"] = self.get_count_of_common_liked_videos(user_id1, user_id2)
+                jth_user_relation["num_common_disliked_videos"] = self.get_count_of_common_disliked_videos(user_id1, user_id2)
+                jth_user_relation["num_common_subsribed_channels"] = self.get_count_of_common_subscribed_channels(user_id1, user_id2)
+                ith_user_relation[user_id2] = jth_user_relation
+            users_relation[user_id1] = ith_user_relation
+        with open("users_relation.json", "w") as file:
+            json.dump(users_relation, file, indent=4)
+
+    def get_relation_score(self, user_relation_data):
+        weightage_liked = 1/3
+        weightage_disliked = 1/3
+        weightage_subscribed = 1/3
+        score =  weightage_liked * user_relation_data["num_common_liked_videos"] + \
+                weightage_disliked * user_relation_data["num_common_disliked_videos"] + \
+                weightage_subscribed * user_relation_data["num_common_subsribed_channels"]
+        return score
+
+    def get_most_related_user(self, current_user_id):
+        with open("users_relation.json", "r") as file:
+            users_relation = json.load(file)
+        other_users_relation_data = users_relation[str(current_user_id)]
+        most_related_user_id, max_relation_score = None
+        for user_id, user_relation_data in other_users_relation_data.items():
+            relation_score = self.get_relation_score(user_relation_data)
+            if relation_score > max_relation_score:
+                max_relation_score = relation_score
+                most_related_user_id = user_id
+        return most_related_user_id
 
 def update_users_data(user_id, property_name, property_value):
     with open("users.json", "r") as file:
@@ -403,7 +474,7 @@ def update_users_data(user_id, property_name, property_value):
     if flag == False:
         users[user_id][property_name].append(property_value)
     with open("users.json", "w") as file:
-        json.dump(users, file)
+        json.dump(users, file, indent=4)
     return flag
 
 
@@ -412,7 +483,7 @@ def update_like_in_cache(video_id):
         cache = json.load(file)
     cache[video_id]["likes"] += 1
     with open("individual.json", "w") as file:
-        json.dump(cache, file)
+        json.dump(cache, file, indent=4)
 
 
 def update_dislike_in_cache(video_id):
@@ -420,7 +491,7 @@ def update_dislike_in_cache(video_id):
         cache = json.load(file)
     cache[video_id]["dislikes"] += 1
     with open("individual.json", "w") as file:
-        json.dump(cache, file)
+        json.dump(cache, file, indent=4)
 
 
 def update_views_in_cache(video_id):
@@ -428,14 +499,14 @@ def update_views_in_cache(video_id):
         cache = json.load(file)
     cache[video_id]["views"] += 1
     with open("individual.json", "w") as file:
-        json.dump(cache, file)
+        json.dump(cache, file,indent=4)
 
 
 class User(Neo4jHandler):
     
     def __init__(self, user_id, uri="bolt://localhost:7687", username="neo4j", password="password"):
         super().__init__(uri, username, password)  # Connect to the database where we already have our data
-        self.user_id = user_id
+        self.user_id = str(user_id)
 
     # All the methods for User-Channel relationship
     def subscribe(self, channel_id):
@@ -458,8 +529,9 @@ class User(Neo4jHandler):
 
 def main():
     neo4j = Neo4jHandler(uri="bolt://localhost:7687", username="neo4j", password="password")
-    neo4j.create_initial_graph()
-    neo4j.get_relationships_meta_data()
+    # neo4j.create_initial_graph()
+    # neo4j.get_relationships_meta_data()
+    neo4j.set_relationship_between_users()
 
 
 if __name__ == "__main__":
