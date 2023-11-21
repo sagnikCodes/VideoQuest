@@ -6,7 +6,7 @@ from jellyfish import jaro_similarity
 
 class MongoDBHandler(object):
     
-    def __init__(self, url, port, db_name, collection_name):
+    def __init__(self, url="localhost", port=27017, db_name="testdb", collection_name="videos"):
         self.client = MongoClient(url, port)
         self.db = self.client[db_name]
         self.collection = self.db[collection_name]

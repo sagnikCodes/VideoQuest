@@ -165,10 +165,11 @@ nav #navbarNav ul li a:hover{
     justify-content: space-between;
     margin-top: 2%;
     padding: 30px;
+    width:100%;
 }
 
 #video-panel {
-    flex: 1.5;
+    flex: 0 0 400px;
     background-color:#fff;
     padding: 20px;
     border-radius: 5px;
@@ -263,7 +264,7 @@ nav #navbarNav ul li a:hover{
 
 
 #side-panel {
-    flex: 1;
+    flex: 0 0 2;
     background-color: #fff;
     padding: 20px;
     border-radius: 5px;

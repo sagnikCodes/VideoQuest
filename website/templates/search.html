@@ -64,7 +64,7 @@
                 <a href="{{ url_for('views.video', video_id=video.videoId) }}">
                     <div class="suggestion-box">
                         <div class="suggestion-thumbnail">
-                            <img src="{{ video.thumbnails.default.url }}" alt="Video Thumbnail">
+                            <img src="{{ video.thumbnails.high.url }}" alt="Video Thumbnail">
                         </div>
                         <div class="suggestion-details">
                             <div class="suggestion-title">{{ video.title }}</div>

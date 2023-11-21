@@ -9,6 +9,7 @@ from pymongo import MongoClient
 import re
 from .mongodb_models import MongoDBHandler
 from .neo4j_models import Neo4jHandler
+from .preprocessing import get_relevant_keywords_from_videodata
 
 
 class Upload(object):
@@ -19,7 +20,7 @@ class Upload(object):
         if '#' in last_line:
             # means video has tags as tags are always written with # 
             tags = last_line.split("#")
-            tags = [tag.split()[0].strip('"') for tag in tags]
+            tags = [tag.strip() for tag in tags]
             return tags[1:]
         else:
             return []
@@ -54,15 +55,13 @@ class Upload(object):
         WebDriverWait(driver, waiting_time).until(
             EC.visibility_of_element_located((By.CSS_SELECTOR, 'h1.ytd-watch-metadata'))
         )
-        title = driver.find_element(By.CSS_SELECTOR, 'h1.ytd-watch-metadata')
+        title = driver.find_element(By.CSS_SELECTOR, 'h1.ytd-watch-metadata').text
         channel_element = driver.find_element(By.ID, 'owner')
         channelId = channel_element.find_element(By.ID, 'channel-name').text
         driver.find_element(By.ID, 'description-inline-expander').click()
         viewCount = driver.find_elements(By.CSS_SELECTOR, '#info-container span')[0].text.replace(' views', '')
         if ',' in viewCount:
-            print("hi")
             viewCount = viewCount.replace(',', '')
-        publication_date = driver.find_elements(By.CSS_SELECTOR, '#info-container span')[1].text
         description = driver.find_element(By.CSS_SELECTOR, '#description-inline-expander .ytd-text-inline-expander span').text
         likeCount = driver.find_element(By.ID, 'segmented-like-button').text
         likeCount = self.format_likeCount(likeCount)
@@ -73,11 +72,19 @@ class Upload(object):
         result["videoId"] = videoId
         result["channelId"] = channelId
         result["title"] = title
+        result["channelTitle"] = channelId
         result["description"] = description
+        result["categoryId"] = 0
         result["tags"] = tags
+        print(tags)
         result["viewCount"] = int(viewCount)
         result["likeCount"] = likeCount
         result["dislikeCount"] = 0  # youtube doesn't show dislike count nowadays
+        result["thumbnails"] = {
+            "high": {"url": f"https://img.youtube.com/vi/{videoId}/hqdefault.jpg"}
+        }
+        result["relevantKeywords"] = get_relevant_keywords_from_videodata(title, channelId, description, tags)
+        driver.close()
         return result
 
     def add_data_to_mongodb(self, video_data):
@@ -100,7 +107,9 @@ class Upload(object):
             neo4j_handler.create_similar_title_relationship(video_id, uploaded_video_id)
             neo4j_handler.create_video_channel_relationship(uploaded_video_id)
     
+
     def upload_video(self, url):
         video_data = self.get_video_data(url)
+        # print(video_data)
         self.add_data_to_mongodb(video_data)
         self.add_data_to_neo4j(video_data)

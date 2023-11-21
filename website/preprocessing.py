@@ -78,6 +78,21 @@ def preprocess():
 
         file.close()
 
+def get_relevant_keywords_from_videodata(title, channel_name, description, tags):
+        all_tags = []
+        for tag in tags:
+            taglist = tag.split()
+            for t in taglist:
+                all_tags.append(t)
+        tagstring = ' '.join(all_tags)
+
+        relevantKeywordsList = get_relevant_words(title) \
+            + get_relevant_words(channel_name) \
+            + get_relevant_words(description) \
+            + get_relevant_words(' '.join(tagstring))
+        
+        return list(dict.fromkeys(relevantKeywordsList))
+
 
 # main function
 if __name__ == '__main__':
