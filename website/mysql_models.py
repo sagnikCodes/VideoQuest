@@ -14,6 +14,7 @@ class SearchQuery(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer)
     query = db.Column(db.String(150))
+    video_clicked = db.Column(db.String(150))
     timestamp = db.Column(db.DateTime(timezone=True), default=func.now())
 
 

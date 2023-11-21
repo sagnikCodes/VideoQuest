@@ -28,13 +28,13 @@ def search():
     if request.method == 'POST':
         search_query = request.form.get('search_query')
         if search_query:
-            new_search_query = SearchQuery(user_id=current_user.id, query=search_query)
-            db.session.add(new_search_query)
-            db.session.commit()
+            # new_search_query = SearchQuery(user_id=current_user.id, query=search_query)
+            # db.session.add(new_search_query)
+            # db.session.commit()
             mongo_handler = MongoDBHandler(url="localhost", port=27017, db_name="testdb", collection_name="videos")
             search_results = mongo_handler.search(search_query=search_query)
-        if search_results:
-            return render_template("search.html", user=current_user, search_query=search_query, search_results=search_results)
+            if search_results:
+                return render_template("search.html", user=current_user, search_query=search_query, search_results=search_results)
     
     return render_template("search.html", user=current_user)
 
@@ -190,6 +190,22 @@ def next_video():
 
         new_next_video = NextVideo(user_id=current_user.id, current_video_id=current_video_id, next_video_id=next_video_id)
         db.session.add(new_next_video)
+        db.session.commit()
+
+        return jsonify({'status': 'success', 'message': 'Request successful.'})
+    
+    return jsonify({"message": "Invalid request."})
+
+@views.route('/save_search_query', methods=['GET', 'POST'])
+@login_required
+def save_search_query():
+    if request.method == 'POST':
+        data = request.get_json()
+        search_query = data['search_query']
+        video_clicked = data['video_clicked']
+
+        new_search_query = SearchQuery(user_id=current_user.id, query=search_query, video_clicked=video_clicked)
+        db.session.add(new_search_query)
         db.session.commit()
 
         return jsonify({'status': 'success', 'message': 'Request successful.'})
