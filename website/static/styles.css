@@ -2,11 +2,11 @@ body{
     margin:0;
     padding:0;
 }
+
 /* navbar */
 #line{
     height: 0.8vh;
     background-color:rgb(240, 56, 56);
-
 }
 header{
     position:relative;
@@ -23,8 +23,6 @@ nav #siteName img{
     margin-left: 50px;
     position: relative;
     top:-4px;
-
-   
 }
 
 nav #siteName h3{
@@ -34,14 +32,7 @@ nav #siteName h3{
     top:10px;
     font-weight: bolder;
     font-size: 50px;
-   
-   
- 
-
 }
-
-
-
 
 nav{
     background-color:  white;
@@ -64,37 +55,20 @@ nav #navbarNav button{
  
 }
 nav #navbarNav button:hover{
-    
-    
     background-color:rgb(240, 56, 56);
-    color: white;
-   
-
- 
+    color: white; 
 }
 
 
 nav #navbarNav ul li a{
-    
-    
     color:black;
     font-weight: bold;
-   
-   
-
- 
 }
 
 nav #navbarNav ul li a:hover{
-    
-    
     text-decoration: underline;
-   
-   
-
- 
 }
-/* search */
+
 .search-container {
     background-color:rgb(248, 211, 213);
     padding: 10px;
@@ -132,7 +106,6 @@ nav #navbarNav ul li a:hover{
     font-family: 'Open Sans', sans-serif;
     font-weight: bold;
     /* font-family: 'Lexend'; */
-    
 }
 
 
@@ -210,11 +183,7 @@ nav #navbarNav ul li a:hover{
   }
 
 #video-panel #like-dislike #video-buttons button:hover {
- 
     background-color:rgb(248, 211, 213);
-  
-
-    
 }
 .active {
     background-color: rgb(240, 56, 56) !important;
@@ -259,10 +228,6 @@ nav #navbarNav ul li a:hover{
    overflow: scroll;
  }
 
-
-
-
-
 #side-panel {
     flex: 0 0 2;
     background-color: #fff;
@@ -286,9 +251,6 @@ h2 {
     border-radius: 5px;
     padding: 10px 0px 10px 10px;
     height:150px;
-
-
-  
 }
 
 .suggestion-thumbnail {
@@ -305,12 +267,6 @@ h2 {
 .suggestion-details {
     flex: 1;
     padding:0;
-   
-  
-
-    
-    
-
 }
 
 .suggestion-title {
@@ -353,14 +309,10 @@ h2 {
     margin: 0 5px;
 }
 
-
-
-
 .active {
     background-color: rgb(240, 56, 56) !important;
     color: #fff !important;
 }
-
 
 /* footer */
 footer{
@@ -384,14 +336,9 @@ footer #footersiteName h3{
     box-sizing: border-box;
     font-size: 35px;
     position:relative;
- 
-   
 }
-
-
 
 footer p{
     font-family: 'Raleway', sans-serif;
-   
     margin-top: 3%;
 }

@@ -1,211 +1,311 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>VideoQuest</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    
     <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
-  />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
-  <link href="https://fonts.googleapis.com/css?family=Lexend" rel="stylesheet" />
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
 
-  <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-   
-  <link rel="icon" href="{{url_for('static', filename='logo.png')}}">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&family=Open+Sans:wght@300;600&family=Raleway:wght@300&family=Roboto+Mono:wght@200&family=Syne&display=swap" rel="stylesheet">
-     <script src="https://kit.fontawesome.com/77d82db749.js" crossorigin="anonymous"></script>
-     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}" />
-     
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Lexend"
+      rel="stylesheet"
+    />
+
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <link rel="icon" href="{{url_for('static', filename='logo.png')}}" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&family=Open+Sans:wght@300;600&family=Raleway:wght@300&family=Roboto+Mono:wght@200&family=Syne&display=swap"
+      rel="stylesheet"
+    />
+    <script
+      src="https://kit.fontawesome.com/77d82db749.js"
+      crossorigin="anonymous"
+    ></script>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+    <script
+      src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+      integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+      integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+      crossorigin="anonymous"
+    ></script>
+
     <script>
-        function logout() {
-            location.href = "{{ url_for('auth.logout') }}";
-        }
+      function logout() {
+        location.href = "{{ url_for('auth.logout') }}";
+      }
     </script>
+  </head>
 
-</head>
-
-<body>
+  <body>
     <header>
-        <div id="line"></div>
-        
+      <div id="line"></div>
     </header>
-   
+
     <nav class="navbar navbar-expand-lg navbar-light">
-        <div id="siteName">
-            <img src="{{url_for('static', filename='logo.png')}}">
-            <h3>VideoQuest</h3>
-            
-        </div>
-       
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
+      <div id="siteName">
+        <img src="{{url_for('static', filename='logo.png')}}" />
+        <h3>VideoQuest</h3>
+      </div>
+
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ml-auto mr-5">
+          <li class="nav-item mr-4">
+            <a class="nav-link" href="#">About</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Contact</a>
+          </li>
+        </ul>
+        <button
+          class="btn btn-outline-danger my-2 my-sm-0 nav-btn"
+          onclick="logout()"
+        >
+          Logout
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto mr-5">
-                <li class="nav-item mr-4">
-                    <a class="nav-link" href="#">About</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Contact</a>
-                </li>
-            </ul>
-            <button class="btn btn-outline-danger my-2 my-sm-0 nav-btn" onclick="logout()">
-                Logout
-            </button>
-        </div>
+      </div>
     </nav>
     <!-- <form action="{{ url_for('views.search') }}" method="POST"> -->
-        <div class="search-container px-5">
-            <button type="button" class="btn btn-primary" id="upload" data-toggle="modal" data-target="#videoModal">
-                <i class="fa-solid fa-cloud-arrow-up"></i>
-                Upload
-            </button>
-              
-              <!-- Modal -->
-            <div class="modal" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="videoModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                    <h5 class="modal-title" id="videoModalLabel">Submit Video URL</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                    </div>
-                    <div class="modal-body">
-                    <form id="videoForm" action="{{ url_for('views.upload_video') }}" method="post">
-                        <div class="form-group">
-                        <label for="videoUrl">Video URL:</label>
-                        <input type="text" name="url" class="form-control" id="videoUrl" placeholder="Enter the URL"  required>
-                        </div>
-                        <button type="submit" class="btn btn-danger">Submit</button>
-                    </form>
-                    </div>
-                </div>
-                </div>
+    <div class="search-container px-5">
+      <button
+        type="button"
+        class="btn btn-primary"
+        id="upload"
+        data-toggle="modal"
+        data-target="#videoModal"
+      >
+        <i class="fa-solid fa-cloud-arrow-up"></i>
+        Upload
+      </button>
+
+      <!-- Modal -->
+      <div
+        class="modal"
+        id="videoModal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="videoModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="videoModalLabel">Submit Video URL</h5>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
             </div>
-            <form action="{{ url_for('views.search') }}" method="POST">
-            <input type="text" name="search_query" id="search-bar" placeholder="Search" value="" />
-            <button type="submit"><i class="fa fa-search"></i></button>
-        </form>
+            <div class="modal-body">
+              <form
+                id="videoForm"
+                action="{{ url_for('views.upload_video') }}"
+                method="post"
+              >
+                <div class="form-group">
+                  <label for="videoUrl">Video URL:</label>
+                  <input
+                    type="text"
+                    name="url"
+                    class="form-control"
+                    id="videoUrl"
+                    placeholder="Enter the URL"
+                    required
+                  />
+                </div>
+                <button type="submit" class="btn btn-danger">Submit</button>
+              </form>
+            </div>
+          </div>
         </div>
+      </div>
+      <form action="{{ url_for('views.search') }}" method="POST">
+        <input
+          type="text"
+          name="search_query"
+          id="search-bar"
+          placeholder="Search"
+          value=""
+        />
+        <button type="submit"><i class="fa fa-search"></i></button>
+      </form>
+    </div>
     <!-- </form> -->
     <div class="main-container">
-        <div id="video-panel">
-            
-            <div id="video-container">
-                <iframe src="https://www.youtube.com/embed/_4QaOc_u2c0" frameborder="0"
-                    allowfullscreen="true"></iframe>
-            </div>
-            <h2>{{ current_video_data.title }}</h2>
-            <form method="post" action="{{ url_for('views.like') }}" id="like-dislike">
-                <div id="video-buttons">
-                    
-                    {% if liked %}
-                    <button class="vote-btn active" id="like-button" type="submit" name="action" value="like">
-                        <i class="fa fa-thumbs-up"></i>
-                        <p id="like-count">{{ current_video_data.likeCount }}</p>
-                    
-                    </button>
-                    {% else %}
-                    <button class="vote-btn" id="like-button" type="submit" name="action" value="like">
-                        <i class="fa fa-thumbs-up"></i>
-                        <p id="like-count">{{ current_video_data.likeCount }}</p>
-                    </button>
-                    {% endif %}
-
-                   
-                    {% if disliked %}
-                    <button class="vote-btn active" id="dislike-button" type="submit" name="action" value="dislike">
-                        <i class="fa fa-thumbs-down"></i>
-                        <p id="dislike-count">
-                            {{ current_video_data.dislikeCount }}
-                        </p>
-                    </button>
-                    {% else %}
-                    
-                    <button class="vote-btn" id="dislike-button" type="submit" name="action" value="dislike">
-                        <i class="fa fa-thumbs-down"></i>
-                        <p id="dislike-count">{{ current_video_data.dislikeCount }}</p>
-                     
-                    </button>
-                    {% endif %}
-                </div>
-            </form>
-            <form method="post" action="{{ url_for('views.subscribe') }}" id="sub">
-                <div id="video-buttons">
-                    {% if subscribed %}
-                    <button class="subscribe-btn active" id="subscribe-button" type="submit" name="action"
-                        value="subscribe">
-                        <i class="fa-solid fa-bell"></i>
-                        SUBSCRIBED
-                    </button>
-                    {% else %}
-                    <button class="subscribe-btn" id="subscribe-button" type="submit" name="action" value="subscribe">
-                        <i class="fa-solid fa-bell"></i>SUBSCRIBE
-                    </button>
-                    {% endif %}
-                </div>
-            </form>
-
-            <p>
-                {{ current_video_data.description }}
-            </p>
+      <div id="video-panel">
+        <div id="video-container">
+          <iframe
+            src="https://www.youtube.com/embed/{{ video_id }}"
+            frameborder="0"
+            allowfullscreen="true"
+          ></iframe>
         </div>
+        <h2>{{ current_video_data.title }}</h2>
+        <form
+          method="post"
+          action="{{ url_for('views.like') }}"
+          id="like-dislike"
+        >
+          <div id="video-buttons">
+            {% if liked %}
+            <button
+              class="vote-btn active"
+              id="like-button"
+              type="submit"
+              name="action"
+              value="like"
+            >
+              <i class="fa fa-thumbs-up"></i>
+              <p id="like-count">{{ current_video_data.likeCount }}</p>
+            </button>
+            {% else %}
+            <button
+              class="vote-btn"
+              id="like-button"
+              type="submit"
+              name="action"
+              value="like"
+            >
+              <i class="fa fa-thumbs-up"></i>
+              <p id="like-count">{{ current_video_data.likeCount }}</p>
+            </button>
+            {% endif %} {% if disliked %}
+            <button
+              class="vote-btn active"
+              id="dislike-button"
+              type="submit"
+              name="action"
+              value="dislike"
+            >
+              <i class="fa fa-thumbs-down"></i>
+              <p id="dislike-count">{{ current_video_data.dislikeCount }}</p>
+            </button>
+            {% else %}
 
-        <div id="side-panel">
-            <h2>Video Suggestions</h2>
-            <ul id="suggested-videos">
-                {% for video in suggested_videos %}
-                <li class="suggestion-link">
-                    <a href="{{ url_for('views.video', video_id=video.videoId) }}">
-                        <div class="suggestion-box">
-                            <div class="suggestion-thumbnail">
-                                <img src="https://i.ytimg.com/vi/_-Qxl9eE8Mk/default.jpg" alt="Video Thumbnail" />
-                            </div>
-                            <div class="suggestion-details">
-                                <div class="suggestion-title">{{ video.title }}</div>
-                                <div class="suggestion-description">
-                                    {% set description_text = video.description[:100] + '...' if
-                                    video.description|length > 100 else video.description %} {{
-                                    description_text }}
-                                </div>
-                            </div>
-                        </div>
-                    </a>
-                </li>
-                {% endfor %}
-            </ul>
-        </div>
+            <button
+              class="vote-btn"
+              id="dislike-button"
+              type="submit"
+              name="action"
+              value="dislike"
+            >
+              <i class="fa fa-thumbs-down"></i>
+              <p id="dislike-count">{{ current_video_data.dislikeCount }}</p>
+            </button>
+            {% endif %}
+          </div>
+        </form>
+        <form method="post" action="{{ url_for('views.subscribe') }}" id="sub">
+          <div id="video-buttons">
+            {% if subscribed %}
+            <button
+              class="subscribe-btn active"
+              id="subscribe-button"
+              type="submit"
+              name="action"
+              value="subscribe"
+            >
+              <i class="fa-solid fa-bell"></i>
+              SUBSCRIBED
+            </button>
+            {% else %}
+            <button
+              class="subscribe-btn"
+              id="subscribe-button"
+              type="submit"
+              name="action"
+              value="subscribe"
+            >
+              SUBSCRIBE
+            </button>
+            {% endif %}
+          </div>
+        </form>
+
+        <p>{{ current_video_data.description }}</p>
+      </div>
+
+      <div id="side-panel">
+        <h2>Video Suggestions</h2>
+        <ul id="suggested-videos">
+          {% for video in suggested_videos %}
+          <li class="suggestion-link" data-video-id="{{ video.videoId }}">
+            <a href="{{ url_for('views.video', video_id=video.videoId) }}">
+              <div class="suggestion-box">
+                <div class="suggestion-thumbnail">
+                  <img
+                    src="{{ video.thumbnails.high.url }}"
+                    alt="Video Thumbnail"
+                  />
+                </div>
+                <div class="suggestion-details">
+                  <div class="suggestion-title">{{ video.title }}</div>
+                  <div class="suggestion-description">
+                    {% set description_text = video.description[:100] + '...' if
+                    video.description|length > 100 else video.description %} {{
+                    description_text }}
+                  </div>
+                </div>
+              </div>
+            </a>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
     </div>
-   
-    
-    
-    
-  
-   
-  
-    
-    
+
     <footer>
-        <div id="footersiteName">
-            <img href="{{url_for('static', filename='logo.png')}}">
-            <h3>VideoQuest</h3>
-        </div>
-       
-        <p>©2023 by VideoQuest. All rights reserved.</p>
+      <div id="footersiteName">
+        <img href="{{url_for('static', filename='logo.png')}}" />
+        <h3>VideoQuest</h3>
+      </div>
+
+      <p>©2023 by VideoQuest. All rights reserved.</p>
     </footer>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
     <script>
         $(document).ready(function () {
             $('.vote-btn').click(function (e) {
@@ -240,16 +340,16 @@
                 }
 
                 var likeCountElement = document.getElementById('like-count');
-                likeCountElement.textContent = `Likes: ${response.likeCount}`;
+                likeCountElement.textContent = `${response.likeCount}`;
 
                 var dislikeCountElement = document.getElementById('dislike-count');
-                dislikeCountElement.textContent = `Dislikes: ${response.dislikeCount}`;
+                dislikeCountElement.textContent = `${response.dislikeCount}`;
 
                 // console.log(response.liked, response.disliked, response.likeCount, response.dislikeCount);
             }
         });
-         
-  
+          });
+      });
     </script>
 
     <script>
@@ -274,17 +374,44 @@
                 var subscribeButtonElement = document.getElementById('subscribe-button');
                 if (response.subscribed) {
                     subscribeButtonElement.classList.add('active');
-                    subscribeButtonElement.textContent = 'SUBSCRIBED';
+                    subscribeButtonElement.innerHTML = '<i class="fa-solid fa-bell"></i> SUBSCRIBED';
+
                 } else {
                     subscribeButtonElement.classList.remove('active');
-                    subscribeButtonElement.textContent = 'SUBSCRIBE';
+                    subscribeButtonElement.innerHTML = 'SUBSCRIBE';
                 }
                 // console.log(response.subscribed)
             }
         });
-       
-     
+          });
+      });
     </script>
-   
-</body>
+
+    <script>
+          $(document).ready(function () {
+          $('.suggestion-link').click(function (e) {
+              e.preventDefault();
+              var nextVideoId = $(this).attr('data-video-id');
+              var currentVideoId = {{ video_id|tojson }};
+              var data = {
+                  'current_video_id': currentVideoId,
+                  'next_video_id': nextVideoId
+              };
+              console.log(data);
+
+              $.ajax({
+                  type: 'POST',
+                  url: `{{ url_for('views.next_video') }}`,
+                  data: JSON.stringify(data),
+                  contentType: "application/json;charset=UTF-8",
+                  success: function (response) {
+                      console.log(response);
+                  }
+              });
+
+              window.location.href = $(this).find('a').attr('href');
+          });
+      });
+    </script>
+  </body>
 </html>

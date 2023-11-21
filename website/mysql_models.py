@@ -41,3 +41,18 @@ class Subscribe(db.Model, UserMixin):
     channel_id = db.Column(db.String(150))
     subscribe_status = db.Column(db.Integer)
     timestamp = db.Column(db.DateTime(timezone=True), default=func.now())
+
+
+def get_click_through_data(user_id, video_id):
+    next_video_data = NextVideo.query.filter_by(user_id=user_id, current_video_id=video_id).all()
+    
+    data = []
+    for video in next_video_data:
+        data.append({
+            'user_id': video.user_id,
+            'current_video_id': video.current_video_id,
+            'next_video_id': video.next_video_id,
+        })
+    
+    return data
+
