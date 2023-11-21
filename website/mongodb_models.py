@@ -17,6 +17,9 @@ class MongoDBHandler(object):
     def __upload_data(self, data):
         self.collection.insert_one(data)
 
+    def upload_single_video_data(self, data):
+        self.__upload_data(data)
+
     def upload_data(self, directory_path):
         for video in os.listdir(directory_path):
             file = open(os.path.join(directory_path, video))

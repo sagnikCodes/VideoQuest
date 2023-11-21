@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, redirect
 from flask_login import login_required, current_user
 from flask import request
 from flask import jsonify
@@ -7,6 +7,7 @@ from .neo4j_models import Neo4jHandler, User as Neo4jUser
 from .mysql_models import SearchQuery, NextVideo, Like, Subscribe
 from . import db
 from sys import stderr
+from .upload_youtube_videos import Upload
 
 views = Blueprint('views', __name__)
 
@@ -27,6 +28,7 @@ def home():
 def search():
     if request.method == 'POST':
         search_query = request.form.get('search_query')
+        search_results = 0
         if search_query:
             new_search_query = SearchQuery(user_id=current_user.id, query=search_query)
             db.session.add(new_search_query)
@@ -195,3 +197,13 @@ def next_video():
         return jsonify({'status': 'success', 'message': 'Request successful.'})
     
     return jsonify({"message": "Invalid request."})
+
+
+@views.route('/upload_video', methods=['GET', 'POST'])
+def upload_video():
+    if request.method == 'POST':
+        url = request.form.get('url')
+        upload_handler = Upload()
+        upload_handler.upload_video(url)
+        return redirect("{{ url_for('views.home') }}")
+    return redirect("{{ url_for('views.home') }}")

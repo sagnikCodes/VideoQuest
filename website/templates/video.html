@@ -1,108 +1,163 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Video Search Engine</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VideoQuest</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+  />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link href="https://fonts.googleapis.com/css?family=Lexend" rel="stylesheet" />
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
-
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
-    <link href="https://fonts.googleapis.com/css?family=Lexend" rel="stylesheet" />
-
-    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
+  <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+   
+  <link rel="icon" href="{{url_for('static', filename='logo.png')}}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&family=Open+Sans:wght@300;600&family=Raleway:wght@300&family=Roboto+Mono:wght@200&family=Syne&display=swap" rel="stylesheet">
+     <script src="https://kit.fontawesome.com/77d82db749.js" crossorigin="anonymous"></script>
+     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}" />
+     
     <script>
         function logout() {
             location.href = "{{ url_for('auth.logout') }}";
         }
     </script>
+
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">Video Search Engine</a>
+    <header>
+        <div id="line"></div>
+        
+    </header>
+   
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div id="siteName">
+            <img src="{{url_for('static', filename='logo.png')}}">
+            <h3>VideoQuest</h3>
+            
+        </div>
+       
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item active">
+            <ul class="navbar-nav ml-auto mr-5">
+                <li class="nav-item mr-4">
                     <a class="nav-link" href="#">About</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Contact</a>
                 </li>
             </ul>
-            <button class="btn btn-outline-danger my-2 my-sm-0" onclick="logout()">
+            <button class="btn btn-outline-danger my-2 my-sm-0 nav-btn" onclick="logout()">
                 Logout
             </button>
         </div>
     </nav>
-
     <form action="{{ url_for('views.search') }}" method="POST">
-        <div class="search-container">
+        <div class="search-container px-5">
+            <button type="button" class="btn btn-primary" id="upload" data-toggle="modal" data-target="#videoModal">
+                <i class="fa-solid fa-cloud-arrow-up"></i>
+                Upload
+            </button>
+              
+              <!-- Modal -->
+            <div class="modal" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="videoModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                    <h5 class="modal-title" id="videoModalLabel">Submit Video URL</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    </div>
+                    <div class="modal-body">
+                    <form id="videoForm" action="{{ url_for('views.upload_video') }}" method="post">
+                        <div class="form-group">
+                        <label for="videoUrl">Video URL:</label>
+                        <input type="text" name="url" class="form-control" id="videoUrl" placeholder="Enter the URL"  required>
+                        </div>
+                        <button type="submit" class="btn btn-danger">Submit</button>
+                    </form>
+                    </div>
+                </div>
+                </div>
+            </div>
             <input type="text" name="search_query" id="search-bar" placeholder="Search" value="" />
             <button type="submit"><i class="fa fa-search"></i></button>
         </div>
     </form>
-
     <div class="main-container">
         <div id="video-panel">
-            <h2>{{ current_video_data.title }}</h2>
+            
             <div id="video-container">
-                <iframe width="560" height="315" src="https://www.youtube.com/embed/{{ video_id }}" frameborder="0"
+                <iframe src="https://www.youtube.com/embed/_4QaOc_u2c0" frameborder="0"
                     allowfullscreen="true"></iframe>
             </div>
-
-            <form method="post" action="{{ url_for('views.like') }}">
+            <h2>India vs australia</h2>
+            <form method="post" action="{{ url_for('views.like') }}" id="like-dislike">
                 <div id="video-buttons">
-                    <p id="like-count">Likes: {{ current_video_data.likeCount }}</p>
+                    
                     {% if liked %}
                     <button class="vote-btn active" id="like-button" type="submit" name="action" value="like">
                         <i class="fa fa-thumbs-up"></i>
+                        <p id="like-count">{{ current_video_data.likeCount }}</p>
+                    
                     </button>
                     {% else %}
                     <button class="vote-btn" id="like-button" type="submit" name="action" value="like">
                         <i class="fa fa-thumbs-up"></i>
+                        <p id="like-count">{{ current_video_data.likeCount }}</p>
                     </button>
                     {% endif %}
 
-                    <p id="dislike-count">
-                        Dislikes: {{ current_video_data.dislikeCount }}
-                    </p>
+                   
                     {% if disliked %}
                     <button class="vote-btn active" id="dislike-button" type="submit" name="action" value="dislike">
                         <i class="fa fa-thumbs-down"></i>
+                        <p id="dislike-count">
+                            {{ current_video_data.dislikeCount }}
+                        </p>
                     </button>
                     {% else %}
+                    
                     <button class="vote-btn" id="dislike-button" type="submit" name="action" value="dislike">
                         <i class="fa fa-thumbs-down"></i>
+                        <p id="dislike-count">{{ current_video_data.dislikeCount }}</p>
+                     
                     </button>
                     {% endif %}
                 </div>
             </form>
-            <form method="post" action="{{ url_for('views.subscribe') }}">
+            <form method="post" action="{{ url_for('views.subscribe') }}" id="sub">
                 <div id="video-buttons">
                     {% if subscribed %}
                     <button class="subscribe-btn active" id="subscribe-button" type="submit" name="action"
                         value="subscribe">
+                        <i class="fa-solid fa-bell"></i>
                         SUBSCRIBED
                     </button>
                     {% else %}
                     <button class="subscribe-btn" id="subscribe-button" type="submit" name="action" value="subscribe">
-                        SUBSCRIBE
+                        <i class="fa-solid fa-bell"></i>SUBSCRIBE
                     </button>
                     {% endif %}
                 </div>
             </form>
 
             <p>
-                {{ current_video_data.description  }}
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem sequi ab hic iusto dolor. Nulla eligendi iusto fugiat sunt dicta fugit pariatur culpa tempore nesciunt.
+                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Tempora, in ducimus consequuntur, ratione autem doloremque ullam odit corporis repellendus saepe necessitatibus nobis dolore error consequatur. Sed, repellendus aut. Voluptatem nemo officiis commodi culpa accusantium repudiandae.
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Totam, repellat. Reprehenderit incidunt perferendis minus voluptatum temporibus iste vero esse similique quis dignissimos totam, quod molestiae. Illo, quibusdam tempore possimus beatae debitis placeat. Pariatur voluptatum corporis tenetur accusamus, magnam quaerat possimus ad deserunt debitis eaque, quod, fugit ullam? Nisi sunt quibusdam minima recusandae ducimus consectetur odit iusto, cum eius non aliquid earum eos facilis corporis, atque corrupti ad quo labore. Ullam repellendus nostrum debitis iure eveniet a minus voluptatibus. Illum pariatur, ipsam, perspiciatis ad error in est, aliquam iste enim labore illo exercitationem adipisci deleniti reprehenderit id accusantium odit tempora consectetur! Qui libero quae quasi neque doloremque labore, magni voluptate commodi, voluptatum molestias, aliquid accusamus. Quam dolorum iure et ex quia ipsam consequuntur, atque sint recusandae blanditiis modi obcaecati cum voluptas adipisci provident eveniet dolor impedit error necessitatibus ducimus possimus numquam enim molestias? Vitae aspernatur earum quo voluptatum cumque ut quae similique molestias? Officia vitae voluptatum temporibus accusantium consequuntur nostrum animi impedit sed est nihil. Consequuntur, earum minus? Qui, maxime animi. Eligendi a non dignissimos perspiciatis facere consectetur saepe accusamus incidunt mollitia quas possimus ipsum dolorum quae soluta magnam harum neque quasi, laborum accusantium cum ad quis expedita exercitationem! Dolor ducimus error nisi id nostrum nulla, tempora dolorum odit minima aliquam cum ex, corporis nihil autem illum pariatur? Ex facere temporibus quod consequuntur dolorem eum voluptate cumque veritatis exercitationem voluptas perferendis, est inventore sed, fugit incidunt, at rerum! Quis quas enim non eaque, id officia cupiditate eveniet veritatis voluptate commodi ipsam veniam eligendi ex totam ad accusantium magnam molestiae dolores sapiente suscipit aut repellat optio consequatur pariatur. Consequatur at mollitia quae deserunt sint quidem saepe corrupti tempora natus pariatur cupiditate, beatae animi incidunt ex iste quaerat consectetur asperiores ipsum nihil, sunt repellat ullam autem! Fuga, ullam? Nihil, voluptates inventore quo expedita amet ab, velit iste doloribus reprehenderit tenetur culpa eligendi dolore? Sit cum expedita excepturi, quia debitis animi blanditiis voluptate vero odio assumenda nisi tempora ab temporibus modi quas corrupti vel magni praesentium rem iste ex enim? Sint pariatur natus reiciendis eum quis corporis provident, dolorum quia iste id, eaque, voluptate accusamus recusandae! Earum quis ab sint debitis, accusamus dicta aliquam velit assumenda eligendi perferendis quia inventore! Autem omnis maxime soluta dolor libero, nobis eveniet ullam iure exercitationem rerum consequatur commodi minima non ratione eaque, veritatis iste vero inventore. Cupiditate nobis labore nemo mollitia officia praesentium ullam impedit ad quo aut. Incidunt sapiente nisi sequi est tenetur voluptate eveniet, in blanditiis, quis quisquam distinctio quaerat? Excepturi consequuntur necessitatibus commodi, dolor aliquid animi labore iste provident quas perferendis quae sed praesentium quos, molestiae eligendi ipsa, dolores ipsum facilis voluptate laudantium quidem repellat dolore impedit. Soluta incidunt tempora voluptas placeat. Tempore non voluptas facere labore obcaecati delectus mollitia numquam neque culpa possimus eum aperiam, blanditiis, eos magnam maiores debitis expedita sequi dolor ipsam quidem molestiae reiciendis doloribus vel ipsa? Praesentium enim eligendi quo voluptatibus necessitatibus quas molestiae, nemo dolore odit excepturi ullam tempora id beatae. Totam ratione accusamus distinctio harum itaque! Id, pariatur expedita eligendi esse rem error dolore enim iste maiores fuga ratione fugiat hic voluptates tempore exercitationem assumenda odit quo magni amet dolorum accusamus quisquam. Culpa totam voluptate nobis quo cupiditate aliquid ipsa sequi ipsam? Nostrum iusto dolorem, molestias aspernatur provident quos dolor debitis expedita fuga quaerat asperiores dignissimos id officiis temporibus itaque repellendus qui incidunt, veniam quia tenetur cum aliquam cupiditate atque pariatur. Magnam officiis culpa, architecto possimus non enim sint hic dolorum repudiandae perspiciatis delectus beatae quasi optio obcaecati, consectetur mollitia. Iste adipisci error fuga! Nemo illum earum labore ipsum voluptatibus fuga dolorem excepturi, corporis explicabo natus ipsa facere. Deserunt molestias eligendi saepe doloribus, cum iure ducimus nisi est fuga totam culpa perferendis, sapiente iusto voluptatem nostrum, repellendus quidem nesciunt doloremque dolore. Ad commodi repudiandae cupiditate iure vel, saepe dignissimos vitae, enim alias nesciunt obcaecati laudantium quasi ducimus optio! Debitis obcaecati commodi sed at corporis voluptatibus veritatis ipsam molestias aut? Eaque, culpa ad. Odit a commodi incidunt nemo consequuntur voluptatum, expedita ad, dolores autem consectetur esse voluptates quos alias. Consectetur minima sit obcaecati tempore enim, voluptate fugiat deleniti impedit pariatur optio, mollitia perspiciatis expedita cum doloremque accusamus dolorem quidem quisquam asperiores atque. Asperiores eaque, vitae magni reiciendis voluptatum tempora recusandae soluta sit sed. Minima dolor provident nulla, perspiciatis est iste voluptatem voluptate? Odit, quaerat deleniti? Neque perspiciatis repudiandae hic omnis officiis voluptates soluta, ab facilis deleniti? Ratione impedit dignissimos, sed repudiandae perspiciatis voluptas suscipit aliquam odit eligendi quas officia accusamus amet rem totam obcaecati laboriosam dolorum ut ex ullam laborum tempora officiis corporis molestias veritatis. Illo, deleniti id laudantium repellendus, ipsa alias saepe hic laborum voluptatem sit explicabo mollitia temporibus blanditiis molestias fuga enim veritatis facere consectetur? Recusandae tenetur explicabo et! Facilis delectus voluptatem cupiditate modi ipsam quos, unde magni suscipit tempora aperiam dolores voluptates, magnam, voluptatibus fuga maxime! Facilis perspiciatis error perferendis amet voluptates eius? Impedit voluptate rerum culpa esse fuga nostrum vel at voluptatum assumenda, dolores atque debitis rem porro eum minima soluta reiciendis praesentium quas. Pariatur, aut dolorum exercitationem neque, cupiditate dolor, esse sint laboriosam officia illo officiis. A quam eligendi minus aspernatur. Architecto, tempore quidem. Quae totam iure tempora in nulla! Modi commodi, vitae quaerat recusandae fuga doloribus libero aut, vero minima officiis alias nulla laudantium non qui perspiciatis! Iure quae nemo iusto quis soluta voluptatem architecto neque eveniet optio labore, totam doloremque, non fuga ullam enim consectetur excepturi facere error tempore porro tempora reprehenderit! Commodi perferendis iusto consectetur nulla earum repudiandae officiis id architecto, velit tempore, mollitia ipsam? Minima dolore perferendis, qui quos animi ad, eligendi mollitia, beatae reprehenderit itaque dolores accusamus corporis quaerat quo explicabo facere hic? Illum voluptas itaque corrupti illo ex autem quibusdam beatae cumque quia hic nihil numquam unde libero voluptatibus asperiores obcaecati sunt, voluptatem atque et odit expedita. Cupiditate, amet perferendis! Similique maiores maxime excepturi, necessitatibus quo reprehenderit adipisci saepe modi error deleniti veritatis nisi laborum delectus eaque sit. Inventore deserunt, omnis quisquam modi id iste nulla commodi laboriosam placeat temporibus, enim tempora labore laborum itaque vero expedita reiciendis?
             </p>
         </div>
 
@@ -110,11 +165,11 @@
             <h2>Video Suggestions</h2>
             <ul id="suggested-videos">
                 {% for video in suggested_videos %}
-                <li class="suggestion-link" data-video-id="{{ video.videoId }}">
+                <li class="suggestion-link">
                     <a href="{{ url_for('views.video', video_id=video.videoId) }}">
                         <div class="suggestion-box">
                             <div class="suggestion-thumbnail">
-                                <img src="{{ video.thumbnails.default.url }}" alt="Video Thumbnail" />
+                                <img src="https://i.ytimg.com/vi/_-Qxl9eE8Mk/default.jpg" alt="Video Thumbnail" />
                             </div>
                             <div class="suggestion-details">
                                 <div class="suggestion-title">{{ video.title }}</div>
@@ -131,7 +186,26 @@
             </ul>
         </div>
     </div>
-
+   
+    
+    
+    
+  
+   
+  
+    
+    
+    <footer>
+        <div id="footersiteName">
+            <img src="logo.png">
+            <h3>VideoQuest</h3>
+        </div>
+       
+        <p>©2023 by VideoQuest. All rights reserved.</p>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <script>
         $(document).ready(function () {
             $('.vote-btn').click(function (e) {
@@ -174,8 +248,8 @@
                 // console.log(response.liked, response.disliked, response.likeCount, response.dislikeCount);
             }
         });
-          });
-      });
+         
+  
     </script>
 
     <script>
@@ -208,36 +282,9 @@
                 // console.log(response.subscribed)
             }
         });
-          });
-      });
+       
+     
     </script>
-
-    <script>
-        $(document).ready(function () {
-        $('.suggestion-link').click(function (e) {
-            e.preventDefault();
-            var nextVideoId = $(this).attr('data-video-id');
-            var currentVideoId = {{ video_id|tojson }};
-            var data = {
-                'current_video_id': currentVideoId,
-                'next_video_id': nextVideoId
-            };
-            console.log(data);
-
-            $.ajax({
-                type: 'POST',
-                url: `{{ url_for('views.next_video') }}`,
-                data: JSON.stringify(data),
-                contentType: "application/json;charset=UTF-8",
-                success: function (response) {
-                    console.log(response);
-                }
-            });
-
-            window.location.href = $(this).find('a').attr('href');
-        });
-    });
-    </script>
+   
 </body>
-
 </html>
