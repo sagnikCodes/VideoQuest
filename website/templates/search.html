@@ -31,7 +31,8 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item active">
-                    <a class="nav-link" href="#">About</a#> </li>
+                    <a class="nav-link" href="#">About</a#>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Contact</a>
                 </li>
@@ -59,7 +60,7 @@
     <div id="side-panel">
         <ul id="suggested-videos">
             {% for video in search_results %}
-            <li class="suggestion-link">
+            <li class="suggestion-link" data-video-id="{{video.videoId}}" data-search-query="{{search_query}}">
                 <a href="{{ url_for('views.video', video_id=video.videoId) }}">
                     <div class="suggestion-box">
                         <div class="suggestion-thumbnail">
@@ -79,6 +80,32 @@
             {% endfor %}
         </ul>
     </div>
+
+    <script>
+        $(document).ready(function () {
+            $('.suggestion-link').click(function (e) {
+                e.preventDefault();
+                var videoId = $(this).attr('data-video-id');
+                var searchQuery = $(this).attr('data-search-query');
+
+            var data = {
+                'search_query': searchQuery,
+                'video_clicked': videoId
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: `{{ url_for('views.save_search_query') }}`,
+                data: JSON.stringify(data),
+                contentType: "application/json;charset=UTF-8",
+                success: function (response) {
+                    console.log(response);
+                }
+            });
+            window.location.href = $(this).find('a').attr('href');
+            });
+        });
+    </script>
 </body>
 
 </html>
