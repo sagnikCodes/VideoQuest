@@ -413,5 +413,32 @@
           });
       });
     </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#videoForm').submit(function (e) {
+                e.preventDefault();
+                var form = $(this);
+                var formData = form.serialize();
+                // console.log(formData)
+        
+                $.ajax({
+                    type: form.attr('method'),
+                    url: form.attr('action'),
+                    data: formData,
+                    success: function (response) {
+                        if (response.success) {
+                            $('#videoModal').modal('hide');
+                        } else {
+                            console.log(error);
+                        }
+                    },
+                    error: function () {
+                        console.log(error);
+                    }
+                });
+            });
+        });
+    </script>
   </body>
 </html>

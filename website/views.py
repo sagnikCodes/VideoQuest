@@ -203,10 +203,13 @@ def next_video():
 def upload_video():
     if request.method == 'POST':
         url = request.form.get('url')
+        print(url, file=stderr)
         upload_handler = Upload()
         upload_handler.upload_video(url)
-        return redirect("{{ url_for('views.home') }}")
-    return redirect("{{ url_for('views.home') }}")
+
+        return jsonify({'success': True, 'message': 'Request successful.'})
+    
+    return jsonify({'success': False, "message": "Invalid request."})
 
 
 @views.route('/save_search_query', methods=['GET', 'POST'])

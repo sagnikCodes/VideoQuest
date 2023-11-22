@@ -67,7 +67,7 @@ class Upload(object):
         likeCount = self.format_likeCount(likeCount)
         tags = self.get_tags(description)
         result = {}
-        pattern = re.compile(r'(?<=v=)[\w-]+')
+        pattern = re.compile(r'(?<=v=)[\w-]+|(?<=youtu.be\/)[\w-]+')
         videoId = pattern.findall(url)[0]     
         result["videoId"] = videoId
         result["channelId"] = channelId
@@ -76,7 +76,7 @@ class Upload(object):
         result["description"] = description
         result["categoryId"] = 0
         result["tags"] = tags
-        print(tags)
+        # print(tags)
         result["viewCount"] = int(viewCount)
         result["likeCount"] = likeCount
         result["dislikeCount"] = 0  # youtube doesn't show dislike count nowadays
