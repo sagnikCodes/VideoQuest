@@ -6,6 +6,7 @@ import nltk
 from nltk.corpus import stopwords
 from flask_login import login_required, current_user
 from sys import stderr
+from .mongodb_models import MongoDBHandler
 
 client = MongoClient('localhost', 27017)
 db = client['testdb']
@@ -357,9 +358,9 @@ class Neo4jHandler(object):
         weightage_dislikes = -2
         weightage_views = 3
         weightage_same_channel = 4
-        weightage_num_common_words_description = 5
-        weightage_num_common_words_title = 5
-        weightage_num_common_tags = 5
+        weightage_num_common_words_description = 100
+        weightage_num_common_words_title = 100
+        weightage_num_common_tags = 100
         weightage_liked_video = 2
         weightage_disliked_video = -2
         weightage_subsribed_channel_of_video = 2
@@ -462,7 +463,7 @@ class Neo4jHandler(object):
                 max_relation_score = relation_score
                 most_related_user_id = user_id
         return most_related_user_id
-
+    
     def train_for_next_video(self):
         from mysql_models import get_click_through_data
         from sklearn.ensemble import RandomForestClassifier
@@ -494,6 +495,49 @@ class Neo4jHandler(object):
         next_video_predicted = rf_classifier.predict(input_data)
         return next_video_predicted
     
+    def add_uploaded_video_info_to_individual_cache(self, video_id):
+        mongo_handler = MongoDBHandler()
+        video_data = mongo_handler.get_data(video_id)
+        likes = video_data["likeCount"]
+        dislikes = video_data["dislikeCount"]
+        views = video_data["viewCount"]
+        with open("individual.json", "r") as file:
+            individual = json.load(file)
+        individual[video_id] = {
+            "likes": likes,
+            "dislike": dislikes,
+            "views": views
+        }
+    
+
+    def add_uploaded_video_info_to_relations_cache(self, video_id):
+        mongo_handler = MongoDBHandler()
+        video_data = mongo_handler.get_data(video_id)
+        likes = video_data["likeCount"]
+        dislikes = video_data["dislikeCount"]
+        views = video_data["viewCount"]
+        with open("relations.json", "r") as file:
+            relations = json.load(file)
+        relations_with_other = self.get_relation_with_other_videos(video_id)
+        for video_id_ in relations:
+            same_channel = relations_with_other[video_id_]["same_channel"]
+            num_common_words_description = relations_with_other[video_id_]["num_common_words_description"]
+            num_common_words_title = relations_with_other[video_id_]["num_common_words_title"]
+            num_common_tags = relations_with_other[video_id_]["num_common_tags"]
+            uploaded_video_info = {
+                "likes": likes, 
+                "dislikes": dislikes, 
+                "views": views, 
+                "same_channel": same_channel,
+                "num_common_words_description": num_common_words_description,
+                "num_common_words_title": num_common_words_title,
+                "num_common_tags": num_common_tags
+            }
+            relations[video_id_][video_id] = uploaded_video_info
+
+        relations[video_id] = relations_with_other
+
+    
     def update_cache(self):
         # update relations and individuals.json
         self.set_relationships_meta_data()
@@ -505,35 +549,43 @@ class Neo4jHandler(object):
 def update_users_data(user_id, property_name, property_value):
     with open("users.json", "r") as file:
         users = json.load(file)
-    flag = False
+
     if(property_name == "liked"):
         if property_value in users[user_id]["disliked"]:
             users[user_id]["disliked"].remove(property_value)
         if property_value in users[user_id]["liked"]:
             users[user_id]["liked"].remove(property_value)
-            flag = True
+
     elif(property_name == "disliked"):
         if property_value in users[user_id]["liked"]:
             users[user_id]["liked"].remove(property_value)
         if property_value in users[user_id]["disliked"]:
             users[user_id]["disliked"].remove(property_value)
-            flag = True
+
     elif(property_name == "subscribed"):
         if property_value in users[user_id]["subscribed"]:
             users[user_id]["subscribed"].remove(property_value)
-            flag = True
     
-    if flag == False:
         users[user_id][property_name].append(property_value)
     with open("users.json", "w") as file:
         json.dump(users, file, indent=4)
-    return flag
 
 
 def update_like_in_cache(video_id):
     with open("individual.json", "r") as file:
         cache = json.load(file)
-    cache[video_id]["likes"] += 1
+
+    neo4j_handler = Neo4jHandler()
+    is_liked = neo4j_handler.is_already_liked(current_user.id, video_id)
+    is_disliked = neo4j_handler.is_already_disliked(current_user.id, video_id)
+    if is_liked:
+        cache[video_id]["likes"] -= 1
+    else:
+        cache[video_id]["likes"] += 1
+     
+    if is_disliked:
+        cache[video_id]["disklikes"] -= 1
+
     with open("individual.json", "w") as file:
         json.dump(cache, file, indent=4)
 
@@ -541,7 +593,18 @@ def update_like_in_cache(video_id):
 def update_dislike_in_cache(video_id):
     with open("individual.json", "r") as file:
         cache = json.load(file)
-    cache[video_id]["dislikes"] += 1
+
+    neo4j_handler = Neo4jHandler()
+    is_liked = neo4j_handler.is_already_liked(current_user.id, video_id)
+    is_disliked = neo4j_handler.is_already_disliked(current_user.id, video_id)
+    if is_disliked:
+        cache[video_id]["dislikes"] -= 1
+    else:
+        cache[video_id]["dislikes"] += 1
+     
+    if is_liked:
+        cache[video_id]["likes"] -= 1
+
     with open("individual.json", "w") as file:
         json.dump(cache, file, indent=4)
 
@@ -567,15 +630,13 @@ class User(Neo4jHandler):
         
     # All the methods for User-Video relationship
     def like(self, video_id):
-        is_already_liked = update_users_data(self.user_id, "liked", video_id)
-        if not is_already_liked:
-            update_like_in_cache(video_id)
+        update_users_data(self.user_id, "liked", video_id)
+        update_like_in_cache(video_id)
         self.create_user_liked_video_relationship(self.user_id, video_id)
     
     def dislike(self, video_id):
-        is_already_disliked = update_users_data(self.user_id, "disliked", video_id)
-        if not is_already_disliked:
-            update_dislike_in_cache(video_id)
+        update_users_data(self.user_id, "disliked", video_id)
+        update_dislike_in_cache(video_id)
         self.create_user_disliked_video_relationship(self.user_id, video_id)
 
     def get_metadata(self, video_id):

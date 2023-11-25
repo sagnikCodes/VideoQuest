@@ -27,7 +27,7 @@ class MongoDBHandler(object):
             self.__upload_data(data)
             file.close()
 
-    def  get_data(self, video_id):
+    def get_data(self, video_id):
         result = self.collection.find_one({"videoId": video_id})
         result['_id'] = str(result['_id'])
         return result

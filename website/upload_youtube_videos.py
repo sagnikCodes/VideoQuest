@@ -110,6 +110,8 @@ class Upload(object):
 
     def upload_video(self, url):
         video_data = self.get_video_data(url)
-        # print(video_data)
         self.add_data_to_mongodb(video_data)
         self.add_data_to_neo4j(video_data)
+        neo4j = Neo4jHandler()
+        neo4j.add_uploaded_video_info_to_individual_cache(video_data)
+        neo4j.add_uploaded_video_info_to_relations_cache(video_data)
