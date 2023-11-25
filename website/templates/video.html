@@ -265,6 +265,28 @@
         </form>
 
         <p>{{ current_video_data.description }}</p>
+
+        <div class="comment-section">
+          <form id="commentForm" action="{{ url_for('views.save_comment') }}" method="POST">
+              <div class="form-group">
+                  <input type="hidden" name="video_id" value="{{ video_id }}">
+                  <textarea class="form-control" rows="5" id="comment" name="comment" placeholder="Enter your comment here"></textarea>
+              </div>
+              <button type="submit" class="btn btn-danger">Add Comment</button>
+          </form>
+        </div>
+
+        <div class="comments">
+          <ul>
+            {% for comment in comments_data %}
+            <li>
+              {{ comment.username }}
+              <br/>
+              {{ comment.comment }}
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
       </div>
 
       <div id="side-panel">
@@ -438,6 +460,33 @@
                 });
             });
         });
+    </script>
+
+    <script>
+      $(document).ready(function () {
+          $('#commentForm').submit(function (e) {
+              e.preventDefault();
+              var form = $(this);
+              var formData = form.serialize();
+
+              $.ajax({
+                  type: form.attr('method'),
+                  url: form.attr('action'),
+                  contentType: "application/x-www-form-urlencoded",
+                  data: formData,
+                  success: function (response) {
+                      if (response.status) {
+                          console.log(response.message);
+                      } else {
+                          console.log(response.message);
+                      }
+                  },
+                  error: function () {
+                      console.log(error);
+                  }
+              });
+          });
+      });
     </script>
   </body>
 </html>

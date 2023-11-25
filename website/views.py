@@ -4,7 +4,8 @@ from flask import request
 from flask import jsonify
 from .mongodb_models import MongoDBHandler
 from .neo4j_models import Neo4jHandler, User as Neo4jUser
-from .mysql_models import SearchQuery, NextVideo, Like, Subscribe
+from .mysql_models import SearchQuery, NextVideo, Like, Subscribe, Comment
+from .mysql_models import get_comments
 from . import db
 from sys import stderr
 from .upload_youtube_videos import Upload
@@ -68,9 +69,14 @@ def video(video_id):
     current_video_data['dislikeCount'] = neo4j.get_video_property(video_id=video_id, property_name='dislikes')
     current_video_data['viewCount'] = neo4j.get_video_property(video_id=video_id, property_name='views')
 
+    comments_data = get_comments(current_user_id=current_user.id, video_id=video_id)
+    print(comments_data, file=stderr)
+
     return render_template("video.html", user=current_user, video_id=video_id, 
         current_video_data=current_video_data, suggested_videos=suggested_videos,
-        liked=liked, disliked=disliked, subscribed=subscribed)
+        liked=liked, disliked=disliked, subscribed=subscribed,
+        comments_data=comments_data)
+
 
 @views.route('/like', methods=['GET', 'POST'])
 @login_required
@@ -227,3 +233,19 @@ def save_search_query():
         return jsonify({'status': 'success', 'message': 'Request successful.'})
     
     return jsonify({"message": "Invalid request."})
+
+
+@views.route('/save_comment', methods=['GET', 'POST'])
+@login_required
+def save_comment():
+    if request.method == 'POST':
+        video_id = request.form.get('video_id')
+        comment = request.form.get('comment')
+
+        new_comment = Comment(user_id=current_user.id, video_id=video_id, comment=comment)
+        db.session.add(new_comment)
+        db.session.commit()
+
+        return jsonify({'status': True, 'message': 'Request successful.'})
+    
+    return jsonify({'success': False, "message": "Invalid request."})

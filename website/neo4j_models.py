@@ -462,23 +462,35 @@ class Neo4jHandler(object):
                 max_relation_score = relation_score
                 most_related_user_id = user_id
         return most_related_user_id
-    
-    def train_for_next_video(self, click_through_data):
+
+    def train_for_next_video(self):
+        from mysql_models import get_click_through_data
         from sklearn.ensemble import RandomForestClassifier
         import joblib
         import numpy as np
-        X_train = click_through_data.loc[:, ["user_id", "current_video_id"]].values
-        y_train = click_through_data.loc[:, ["next_video_id"]].values
+        import pandas as pd
+
+        click_through_data = get_click_through_data()
+        click_through_data = pd.DataFrame.from_dict(click_through_data)
+
+        X_train = np.array(click_through_data.drop('next_video_id', axis=1))
+        y_train = np.array(click_through_data['next_video_id'])
         rf_classifier = RandomForestClassifier(n_estimators=100, random_state=42)
         rf_classifier.fit(np.array(X_train), np.array(y_train))
         joblib.dump(rf_classifier, 'random_forest_model.joblib')
 
-    def get_next_video_prediction(self, current_video_id):
+    def get_next_video_prediction(self, user_id, current_video_id):
         import joblib
         import numpy as np
-        user_id = current_user.id
+        from mongodb_models import MongoDBHandler
+        
         rf_classifier = joblib.load('random_forest_model.joblib')
-        input_data = np.array([user_id, current_video_id])
+        current_video_data = MongoDBHandler.get_data(video_id=current_video_id)
+        like_count = current_video_data['likeCount']
+        dislike_count = current_video_data['dislikeCount']
+        view_count = current_video_data['viewCount']
+
+        input_data = np.array([user_id, current_video_id, like_count, dislike_count, view_count])
         next_video_predicted = rf_classifier.predict(input_data)
         return next_video_predicted
     
