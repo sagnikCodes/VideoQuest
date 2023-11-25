@@ -1,3 +1,5 @@
+sentiment_analysis_pipeline.joblib
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
