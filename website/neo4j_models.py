@@ -148,7 +148,15 @@ class Neo4jHandler(object):
             "SET video.likes = video.likes + 1"
         )
         self.graph.run(query)
+
     
+    def update_views(self, video_id):
+            query = (
+                f"MATCH (video:VIDEO {{video_id: '{video_id}'}}) "
+                "SET video.views = video.views + 1"
+            )
+            self.graph.run(query)
+
     def create_user_disliked_video_relationship(self, user_id, video_id):
         user_id = int(user_id)
         user_node = self.graph.nodes.match("USER", user_id=user_id).first() or Node("USER", user_id=user_id)
@@ -505,7 +513,7 @@ class Neo4jHandler(object):
             individual = json.load(file)
         individual[video_id] = {
             "likes": likes,
-            "dislike": dislikes,
+            "dislikes": dislikes,
             "views": views
         }
 
