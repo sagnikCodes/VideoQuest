@@ -508,6 +508,9 @@ class Neo4jHandler(object):
             "dislike": dislikes,
             "views": views
         }
+
+        with open("individual.json", "w") as file:
+            json.dump(individual, file, indent=4)
     
 
     def add_uploaded_video_info_to_relations_cache(self, video_id):
@@ -536,6 +539,9 @@ class Neo4jHandler(object):
             relations[video_id_][video_id] = uploaded_video_info
 
         relations[video_id] = relations_with_other
+
+        with open("relations.json", "w") as file:
+            json.dump(relations, file, indent=4)
 
     
     def update_cache(self):
@@ -584,7 +590,7 @@ def update_like_in_cache(video_id):
         cache[video_id]["likes"] += 1
      
     if is_disliked:
-        cache[video_id]["disklikes"] -= 1
+        cache[video_id]["dislikes"] -= 1
 
     with open("individual.json", "w") as file:
         json.dump(cache, file, indent=4)

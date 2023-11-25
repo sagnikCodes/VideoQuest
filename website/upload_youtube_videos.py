@@ -113,5 +113,5 @@ class Upload(object):
         self.add_data_to_mongodb(video_data)
         self.add_data_to_neo4j(video_data)
         neo4j = Neo4jHandler()
-        neo4j.add_uploaded_video_info_to_individual_cache(video_data)
-        neo4j.add_uploaded_video_info_to_relations_cache(video_data)
+        neo4j.add_uploaded_video_info_to_individual_cache(video_data['videoId'])
+        neo4j.add_uploaded_video_info_to_relations_cache(video_data['videoId'])
