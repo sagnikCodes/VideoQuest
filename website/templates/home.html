@@ -16,6 +16,14 @@
     <script src="{{url_for('static', filename='scripts.js')}}"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
 
+    <link rel = "icon" href="{{ url_for('static', filename='logo.png') }}" type = "image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&family=Open+Sans:wght@300;600&family=Raleway:wght@300&family=Roboto+Mono:wght@200&family=Syne&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/77d82db749.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
     <script>
         function logout() {
             location.href = "{{ url_for('auth.logout') }}";
@@ -24,53 +32,130 @@
 </head>
 
 <body>
-    <!-- Navigation bar with Bootstrap styling -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">Video Search Engine</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
+    <header>
+        <div id="line"></div>
+      </header>
+  
+      <nav class="navbar navbar-expand-lg navbar-light">
+        <div id="siteName">
+          <img src="{{url_for('static', filename='logo.png')}}" />
+          <h3>VideoQuest</h3>
+        </div>
+  
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-toggle="collapse"
+          data-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="#">About</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Contact</a>
-                </li>
-            </ul>
-            <button class="btn btn-outline-danger my-2 my-sm-0" onclick="logout()">Logout</button>
+          <ul class="navbar-nav ml-auto mr-5">
+            <li class="nav-item mr-4">
+              <a class="nav-link" href="#">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Contact</a>
+            </li>
+          </ul>
+          <button
+            class="btn btn-outline-danger my-2 my-sm-0 nav-btn"
+            onclick="logout()"
+          >
+            Logout
+          </button>
         </div>
-    </nav>
-    
-    <form action="{{ url_for('views.search') }}" method="POST">
-        <div class="search-container">
-            <input type="text" name="search_query" id="search-bar" placeholder="Search">
-            <button type="submit"><i class="fa fa-search"></i></button>
+      </nav>
+  
+      <div class="search-container px-5">
+        <button
+          type="button"
+          class="btn btn-primary"
+          id="upload"
+          data-toggle="modal"
+          data-target="#videoModal"
+        >
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          Upload
+        </button>
+  
+        <div
+          class="modal"
+          id="videoModal"
+          tabindex="-1"
+          role="dialog"
+          aria-labelledby="videoModalLabel"
+          aria-hidden="true"
+        >
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="videoModalLabel">Submit Video URL</h5>
+                <button
+                  type="button"
+                  class="close"
+                  data-dismiss="modal"
+                  aria-label="Close"
+                >
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <form
+                  id="videoForm"
+                  action="{{ url_for('views.upload_video') }}"
+                  method="post"
+                >
+                  <div class="form-group">
+                    <label for="videoUrl">Video URL:</label>
+                    <input
+                      type="text"
+                      name="url"
+                      class="form-control"
+                      id="videoUrl"
+                      placeholder="Enter the URL"
+                      required
+                    />
+                  </div>
+                  <button type="submit" class="btn btn-danger">Submit</button>
+                </form>
+              </div>
+            </div>
+          </div>
         </div>
-    </form>
+        <form action="{{ url_for('views.search') }}" method="POST">
+          <input
+            type="text"
+            name="search_query"
+            id="search-bar"
+            placeholder="Search"
+            value=""
+          />
+          <button type="submit"><i class="fa fa-search"></i></button>
+        </form>
+      </div>
 
     <div class="main-container">
-        <div id="video-panel">
-            <h2>Current Video</h2>
-            <div id="video-container"></div>
-
-            <div id="video-buttons" class="hidden">
-                <button id="like-button"><i class="fa fa-thumbs-up"></i></button>
-                <button id="dislike-button"><i class="fa fa-thumbs-down"></i></button>
-                <button id="subscribe-button">SUBSCRIBE</button>
-                <button id="bell-icon-button"><i class="fa fa-bell"></i></button>
-            </div>
-
+        <div id="video-panel" style="height:800px">
+            
         </div>
 
-        <div id="side-panel">
+        <div id="side-panel" style="height:800px">
             <h2>Video Suggestions</h2>
-            <ul id="suggested-videos">
-            </ul>
         </div>
     </div>
-</body>
 
+    <footer>
+        <div id="footersiteName">
+            <img src="{{ url_for('static', filename='logo.png') }}">
+            <h3>VideoQuest</h3>
+        </div>
+       
+        <p>©2023 by VideoQuest. All rights reserved.</p>
+    </footer>
+</body>
 </html>

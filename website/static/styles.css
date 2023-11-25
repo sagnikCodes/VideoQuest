@@ -115,7 +115,7 @@ nav #navbarNav ul li a:hover{
     border: 2px solid rgb(240, 56, 56);
 }
 
-.search-container>button {
+.search-container>form>button {
     background-color: rgb(240, 56, 56);
     width:5%;
     min-width: 50px;
@@ -126,7 +126,7 @@ nav #navbarNav ul li a:hover{
     padding: 10px 15px;
     cursor: pointer;
 }
-.search-container>button:hover {
+.search-container>form>button:hover {
     background-color: rgb(205, 24, 24);
 }
 
