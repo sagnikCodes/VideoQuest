@@ -8,10 +8,6 @@ from .neo4j_models import Neo4jHandler
 import json
 
 
-with open('users.json', 'r') as file:
-    users = json.load(file)
-
-
 auth = Blueprint('auth', __name__)
 
 
@@ -59,7 +55,14 @@ def signup():
         neo4j = Neo4jHandler()
         user_id = current_user.id
         neo4j.create_user_node(user_id)
+        
         # Initialize json
+        try:
+            with open('users.json', 'r') as file:
+                users = json.load(file)
+        except:
+            users = {}
+
         users[user_id] = {"liked": [], "disliked": [],"subscribed": [], "hit_bell_icon": []}
         with open("users.json", "w") as file:
             json.dump(users, file)

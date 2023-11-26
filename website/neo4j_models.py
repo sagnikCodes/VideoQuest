@@ -14,9 +14,6 @@ collection = db['videos']
 videos_data = list(collection.find())
 english_stopwords = set(stopwords.words('english'))
 
-with open('users.json', 'r') as file:
-    user_cache = json.load(file)
-
 class Neo4jHandler(object):
     
     def __init__(self, uri="bolt://localhost:7687", username="neo4j", password="password"):
@@ -337,8 +334,10 @@ class Neo4jHandler(object):
     
     def get_score(self, user_id, current_video_id, video_id, individual_cache, relations_cache):
         try:
+            with open('users.json', 'r') as file:
+                user_cache = json.load(file)
             user_data = user_cache[user_id]
-        except KeyError:
+        except:
             user_data = {"liked": [], "disliked": [], "subscribed": []}
         
         video_data = individual_cache[video_id]
@@ -431,8 +430,11 @@ class Neo4jHandler(object):
         return self.graph.evaluate(query)
     
     def set_relationship_between_users(self):
-        with open("users.json", "r") as file:
-            users = json.load(file)
+        try:
+            with open("users.json", "r") as file:
+                users = json.load(file)
+        except:
+            users = {}
         all_user_id = list(users.keys())
         users_relation = {}
         num_users = len(all_user_id)
@@ -463,7 +465,11 @@ class Neo4jHandler(object):
     def get_most_related_user(self, current_user_id):
         with open("users_relation.json", "r") as file:
             users_relation = json.load(file)
-        other_users_relation_data = users_relation[str(current_user_id)]
+        try:
+            other_users_relation_data = users_relation[str(current_user_id)]
+        except:
+            other_users_relation_data = {}
+        
         most_related_user_id, max_relation_score = None, 0
         for user_id, user_relation_data in other_users_relation_data.items():
             relation_score = self.get_relation_score(user_relation_data)
@@ -564,23 +570,29 @@ def update_users_data(user_id, property_name, property_value):
     with open("users.json", "r") as file:
         users = json.load(file)
 
+    flag = False
     if(property_name == "liked"):
         if property_value in users[user_id]["disliked"]:
             users[user_id]["disliked"].remove(property_value)
         if property_value in users[user_id]["liked"]:
             users[user_id]["liked"].remove(property_value)
+            flag = True
 
     elif(property_name == "disliked"):
         if property_value in users[user_id]["liked"]:
             users[user_id]["liked"].remove(property_value)
         if property_value in users[user_id]["disliked"]:
             users[user_id]["disliked"].remove(property_value)
+            flag = True
 
     elif(property_name == "subscribed"):
         if property_value in users[user_id]["subscribed"]:
             users[user_id]["subscribed"].remove(property_value)
+            flag = True
     
+    if not flag:
         users[user_id][property_name].append(property_value)
+
     with open("users.json", "w") as file:
         json.dump(users, file, indent=4)
 
