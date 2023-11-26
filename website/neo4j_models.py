@@ -11,10 +11,9 @@ try:
 except:
     from mongodb_models import MongoDBHandler
 
-client = MongoClient('localhost', 27017)
-db = client['testdb']
-collection = db['videos']
-videos_data = list(collection.find())
+
+videos_data = list(MongoDBHandler().collection.find())
+
 english_stopwords = set(stopwords.words('english'))
 
 class Neo4jHandler(object):
@@ -336,6 +335,7 @@ class Neo4jHandler(object):
         print(f"Time taken : {end_time - start_time}")
     
     def get_score(self, user_id, current_video_id, video_id, individual_cache, relations_cache):
+        from .mysql_models import NextVideo, get_comments
         try:
             with open('users.json', 'r') as file:
                 user_cache = json.load(file)
@@ -364,6 +364,10 @@ class Neo4jHandler(object):
                 videos_channel_is_subsribed = 1
                 break
 
+        count_next_video = NextVideo.query.filter_by(user_id=user_id, current_video_id=current_video_id, next_video_id=video_id).count()
+        
+        comments = get_comments(current_user_id=user_id, video_id=video_id)
+
         weightage_likes = 1
         weightage_dislikes = -2
         weightage_views = 3
@@ -375,6 +379,21 @@ class Neo4jHandler(object):
         weightage_disliked_video = -2
         weightage_subsribed_channel_of_video = 2
 
+        weightage_next_video = 1
+        randomforest_prediction = self.get_next_video_prediction(user_id=current_video_id, current_video_id=current_video_id)
+        if randomforest_prediction:
+            weightage_randomforest = (randomforest_prediction == video_id)
+        else:
+            weightage_randomforest = 0
+
+        weightage_positive_sentiment = +1
+        weightage_neutral_sentiment = 0
+        weightage_negative_sentiment = -1
+
+        comment_score = sum([weightage_positive_sentiment * comment['positive_sentiment_score'] + \
+                            weightage_neutral_sentiment * comment['neutral_sentiment_score'] + \
+                            weightage_negative_sentiment * comment['negative_sentiment_score'] for comment in comments])
+
         relation_data = relations_cache[current_video_id][video_id]
         
         score = weightage_likes * video_data["likes"] + weightage_dislikes * video_data["dislikes"] + \
@@ -383,7 +402,11 @@ class Neo4jHandler(object):
             weightage_num_common_words_title * relation_data["num_common_words_title"] + \
             weightage_num_common_tags * relation_data["num_common_tags"] + \
             weightage_liked_video * video_is_liked + weightage_disliked_video * video_is_disliked + \
-            weightage_subsribed_channel_of_video * videos_channel_is_subsribed
+            weightage_subsribed_channel_of_video * videos_channel_is_subsribed + \
+            weightage_next_video * count_next_video + \
+            weightage_randomforest + \
+            comment_score
+            
         return score
 
     def get_score_wrt_current_video(self, current_video_id):
@@ -481,28 +504,37 @@ class Neo4jHandler(object):
                 most_related_user_id = user_id
         return most_related_user_id
     
-    def train_for_next_video(self):
-        from mysql_models import get_click_through_data
+    def train_for_next_video(self, threshold=50):
         from sklearn.ensemble import RandomForestClassifier
         import joblib
         import numpy as np
         import pandas as pd
+        from .mysql_models import NextVideo, get_click_through_data
 
-        click_through_data = get_click_through_data()
-        click_through_data = pd.DataFrame.from_dict(click_through_data)
+        count_click_through_data = NextVideo.query.count()
+        if count_click_through_data < threshold:
+            return False
+        
+        click_through_data = pd.DataFrame.from_dict(get_click_through_data())
 
         X_train = np.array(click_through_data.drop('next_video_id', axis=1))
         y_train = np.array(click_through_data['next_video_id'])
         rf_classifier = RandomForestClassifier(n_estimators=100, random_state=42)
         rf_classifier.fit(np.array(X_train), np.array(y_train))
         joblib.dump(rf_classifier, 'random_forest_model.joblib')
+        return True
 
     def get_next_video_prediction(self, user_id, current_video_id):
         import joblib
         import numpy as np
-        from mongodb_models import MongoDBHandler
         
-        rf_classifier = joblib.load('random_forest_model.joblib')
+        try:
+            rf_classifier = joblib.load('random_forest_model.joblib')
+        except:
+            if not self.train_for_next_video():
+                return None
+            rf_classifier = joblib.load('random_forest_model.joblib')
+
         current_video_data = MongoDBHandler.get_data(video_id=current_video_id)
         like_count = current_video_data['likeCount']
         dislike_count = current_video_data['dislikeCount']
@@ -681,8 +713,8 @@ class User(Neo4jHandler):
 
 def main():
     neo4j = Neo4jHandler(uri="bolt://localhost:7687", username="neo4j", password="password")
-    neo4j.create_initial_graph()
-    neo4j.update_cache()
+    # neo4j.create_initial_graph()
+    # neo4j.update_cache()
 
 
 if __name__ == "__main__":

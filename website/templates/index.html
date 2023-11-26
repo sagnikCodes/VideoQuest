@@ -40,7 +40,7 @@
             <ul class="navbar-nav ml-auto">
                 {% if user.is_authenticated %}
                 <li class="nav-item active mr-3 font-weight-bold">
-                    <a class="nav-link" href="{{ url_for('views.home') }}">Home</a>
+                    <a class="nav-link" href="{{ url_for('views.search') }}">Discover</a>
                 </li>
                 <li class="nav-item nav-btn">
                     <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>

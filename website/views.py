@@ -9,6 +9,7 @@ from .mysql_models import get_comments
 from . import db
 from sys import stderr
 from .upload_youtube_videos import Upload
+from .api import get_sentiment_scores
 
 views = Blueprint('views', __name__)
 
@@ -196,6 +197,9 @@ def next_video():
         current_video_id = data['current_video_id']
         next_video_id = data['next_video_id']
 
+        neo4j_handler = Neo4jHandler()
+        neo4j_handler.update_views(video_id=next_video_id)
+
         new_next_video = NextVideo(user_id=current_user.id, current_video_id=current_video_id, next_video_id=next_video_id)
         db.session.add(new_next_video)
         db.session.commit()
@@ -226,6 +230,9 @@ def save_search_query():
         search_query = data['search_query']
         video_clicked = data['video_clicked']
 
+        neo4j_handler = Neo4jHandler()
+        neo4j_handler.update_views(video_id=video_clicked)
+
         new_search_query = SearchQuery(user_id=current_user.id, query=search_query, video_clicked=video_clicked)
         db.session.add(new_search_query)
         db.session.commit()
@@ -242,7 +249,16 @@ def save_comment():
         video_id = request.form.get('video_id')
         comment = request.form.get('comment')
 
-        new_comment = Comment(user_id=current_user.id, video_id=video_id, comment=comment)
+        response = get_sentiment_scores(comment)
+        negative_sentiment_score = float(response['negative'])
+        neutral_sentiment_score = float(response['neutral'])
+        postive_sentiment_score = float(response['positive'])
+        
+        new_comment = Comment(user_id=current_user.id, video_id=video_id, comment=comment,
+            negative_sentiment_score=negative_sentiment_score,
+            neutral_sentiment_score=neutral_sentiment_score,
+            positive_sentiment_score=postive_sentiment_score)
+        
         db.session.add(new_comment)
         db.session.commit()
 

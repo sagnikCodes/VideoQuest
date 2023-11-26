@@ -12,7 +12,7 @@ from .mysql_models import get_comments
 
 api = Blueprint('api', __name__)
 pipe = joblib.load('sentiment_analysis_pipeline.joblib')
-hate_speech_pipe = joblib.load("hate_speech_model.joblib")
+# hate_speech_pipe = joblib.load("hate_speech_model.joblib")
 
 
 def remove_tags(raw_text):
@@ -33,12 +33,10 @@ def sentiment_analysis():
     comment = remove_tags(comment)
     comment = remove_stopwords(comment)
     comment = np.array([comment])
-
     response = {}
     response['negative'] = pipe.predict_proba(comment)[0][0]
     response['neutral'] = pipe.predict_proba(comment)[0][1]
     response['positive'] = pipe.predict_proba(comment)[0][2]
-    
     return jsonify(response)
 
 
@@ -50,9 +48,9 @@ def emotional_analysis():
     comment = np.array([comment])
     
     response = {}
-    response['hate speech'] = hate_speech_pipe.predict_proba(comment)[0][0]
-    response['offensive language'] = hate_speech_pipe.predict_proba(comment)[0][1]
-    response['neutral'] = hate_speech_pipe.predict_proba(comment)[0][2]
+    # response['hate speech'] = hate_speech_pipe.predict_proba(comment)[0][0]
+    # response['offensive language'] = hate_speech_pipe.predict_proba(comment)[0][1]
+    # response['neutral'] = hate_speech_pipe.predict_proba(comment)[0][2]
     
     return response
 
@@ -68,7 +66,7 @@ def analyze_comment():
 
 
 @api.route("/analyze_sentiment", methods=['GET', 'POST'])
-def analyze_comment():
+def analyze_sentiment():
     if request.method == 'POST':
         comment = request.form.get("comment")
         url = "http://127.0.0.1:9000/api/emotional_analysis?comment='" + comment + "'"
@@ -92,3 +90,15 @@ def get_overall_emotion(video_id):
         "offensive language": offensive_comment,
         "neutral": neutral
     }
+
+
+def get_sentiment_scores(comment):
+    comment = remove_tags(comment)
+    comment = remove_stopwords(comment)
+    comment = np.array([comment])
+    response = {}
+    response['negative'] = pipe.predict_proba(comment)[0][0]
+    response['neutral'] = pipe.predict_proba(comment)[0][1]
+    response['positive'] = pipe.predict_proba(comment)[0][2]
+    print(response)
+    return response

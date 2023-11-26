@@ -47,6 +47,7 @@
       type="text/css"
       href="{{ url_for('static', filename='styles.css') }}"
     />
+
     <script
       src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
       integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
@@ -93,7 +94,9 @@
             <a class="nav-link" href="{{ url_for('views.about') }}">About</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">{{ url_for('views.contact') }}</a>
+            <a class="nav-link" href="{{ url_for('views.contact') }}"
+              >Contact</a
+            >
           </li>
         </ul>
         <button
@@ -263,8 +266,24 @@
             {% endif %}
           </div>
         </form>
-
-        <p>{{ current_video_data.description }}</p>
+        <div class="container" id="desc">
+          <div class="row">
+            <div class="col-md-12">
+              <div id="summary">
+                <p class="collapse" id="collapseSummary">
+                  {{ current_video_data.description }}
+                </p>
+                <a
+                  class="collapsed"
+                  data-toggle="collapse"
+                  href="#collapseSummary"
+                  aria-expanded="false"
+                  aria-controls="collapseSummary"
+                ></a>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <div class="comment-section">
           <h2>Comments</h2>
