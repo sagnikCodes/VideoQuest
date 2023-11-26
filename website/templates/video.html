@@ -396,10 +396,10 @@
                 }
 
                 var likeCountElement = document.getElementById('like-count');
-                likeCountElement.textContent = `${response.likeCount}`;
+                likeCountElement.textContent = `${formatCount(response.likeCount)}`;
 
                 var dislikeCountElement = document.getElementById('dislike-count');
-                dislikeCountElement.textContent = `${response.dislikeCount}`;
+                dislikeCountElement.textContent = `${formatCount(response.dislikeCount)}`;
 
                 // console.log(response.liked, response.disliked, response.likeCount, response.dislikeCount);
             }
@@ -453,7 +453,7 @@
                   'current_video_id': currentVideoId,
                   'next_video_id': nextVideoId
               };
-              console.log(data);
+              // console.log(data);
 
               $.ajax({
                   type: 'POST',
@@ -461,7 +461,7 @@
                   data: JSON.stringify(data),
                   contentType: "application/json;charset=UTF-8",
                   success: function (response) {
-                      console.log(response);
+                      // console.log(response);
                   }
               });
 
@@ -511,7 +511,18 @@
             data: formData,
             success: function (response) {
               if (response.status) {
-                console.log(response.message);
+                // console.log(response.message);
+
+                $('.comments ul').empty();
+                response.comments.forEach(function(comment){
+                  var newComment = $('<li></li>');
+                  newComment.append('<img src="{{ url_for('static', filename='anonymous.png') }}" />');
+                  newComment.append('<h6><span>&#64;</span> ' + comment.username + '</h6>');
+                  newComment.append('<p>' + comment.comment + '</p>');
+
+
+                  $('.comments ul').append(newComment);
+                });
               } else {
                 console.log(response.message);
               }
@@ -526,10 +537,12 @@
 
     <script>
       function formatCount(count) {
-        if (count >= 1000000) {
-          return Math.floor(count / 1000000) + "m";
+        if (count >= 1000000000 ) {
+          return Math.floor(count / 1000000000) + "B";
+        } else if (count >= 1000000) {
+          return Math.floor(count / 1000000) + "M";
         } else if (count >= 1000) {
-          return Math.floor(count / 1000) + "k";
+          return Math.floor(count / 1000) + "K";
         } else {
           return count.toString();
         }

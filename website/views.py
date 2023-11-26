@@ -71,7 +71,7 @@ def video(video_id):
     current_video_data['viewCount'] = neo4j.get_video_property(video_id=video_id, property_name='views')
 
     comments_data = get_comments(current_user_id=current_user.id, video_id=video_id)
-    print(comments_data, file=stderr)
+    # print(comments_data, file=stderr)
 
     return render_template("video.html", user=current_user, video_id=video_id, 
         current_video_data=current_video_data, suggested_videos=suggested_videos,
@@ -262,7 +262,9 @@ def save_comment():
         db.session.add(new_comment)
         db.session.commit()
 
-        return jsonify({'status': True, 'message': 'Request successful.'})
+        comments_data = get_comments(current_user_id=current_user.id, video_id=video_id)
+
+        return jsonify({'status': True, 'message': 'Request successful.', 'comments': comments_data})
     
     return jsonify({'success': False, "message": "Invalid request."})
 
