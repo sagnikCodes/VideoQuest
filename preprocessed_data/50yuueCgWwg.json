@@ -115,6 +115,16 @@
         "twitter",
         "download",
         "android",
-        "app"
+        "app",
+        "exchange",
+        "deposit",
+        "note",
+        "atm",
+        "withdrawal",
+        "demonetisation",
+        "news",
+        "live",
+        "hindi",
+        "limit"
     ]
 }

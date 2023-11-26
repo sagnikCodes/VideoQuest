@@ -114,6 +114,11 @@
         "forget",
         "share",
         "leave",
-        "comments"
+        "comments",
+        "populor",
+        "teaser",
+        "hd",
+        "romantic",
+        "latest"
     ]
 }

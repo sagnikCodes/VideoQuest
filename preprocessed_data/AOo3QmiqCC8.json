@@ -88,6 +88,12 @@
         "video",
         "download",
         "news",
-        "app"
+        "app",
+        "currency",
+        "rs",
+        "bank",
+        "agenda",
+        "rupees",
+        "24x7"
     ]
 }

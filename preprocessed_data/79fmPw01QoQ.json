@@ -84,6 +84,17 @@
         "twitter",
         "download",
         "android",
-        "app"
+        "app",
+        "children",
+        "pocket",
+        "money",
+        "queue",
+        "outside",
+        "atms",
+        "hindi",
+        "news",
+        "live",
+        "youtube",
+        "channel"
     ]
 }

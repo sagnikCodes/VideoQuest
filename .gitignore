@@ -1,4 +1,5 @@
 sentiment_analysis_pipeline.joblib
+hate_speech_model.joblib
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -92,6 +92,14 @@
         "android",
         "app",
         "videos",
-        "visit"
+        "visit",
+        "note",
+        "ban",
+        "pm",
+        "hindi",
+        "news",
+        "live",
+        "youtube",
+        "channel"
     ]
 }

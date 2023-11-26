@@ -77,6 +77,12 @@
         "videos",
         "download",
         "news",
-        "app"
+        "app",
+        "currency",
+        "ban",
+        "rs",
+        "note",
+        "transaction",
+        "24x7"
     ]
 }

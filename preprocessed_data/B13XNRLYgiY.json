@@ -121,6 +121,12 @@
         "android",
         "app",
         "videos",
-        "visit"
+        "visit",
+        "note",
+        "ban",
+        "rupee",
+        "pm",
+        "live",
+        "hindi"
     ]
 }

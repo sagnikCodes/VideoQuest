@@ -111,6 +111,12 @@
         "android",
         "app",
         "videos",
-        "visit"
+        "visit",
+        "note",
+        "ban",
+        "rupees",
+        "hindi",
+        "news",
+        "live"
     ]
 }
