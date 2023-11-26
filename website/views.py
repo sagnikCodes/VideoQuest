@@ -249,3 +249,13 @@ def save_comment():
         return jsonify({'status': True, 'message': 'Request successful.'})
     
     return jsonify({'success': False, "message": "Invalid request."})
+
+
+@views.route('/about', methods=['GET', 'POST'])
+def about():
+    return render_template("about.html", user=current_user)
+
+
+@views.route('/contact', methods=['GET', 'POST'])
+def contact():
+    return render_template("contact.html", user=current_user)

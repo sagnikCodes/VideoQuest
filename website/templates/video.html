@@ -90,10 +90,10 @@
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ml-auto mr-5">
           <li class="nav-item mr-4">
-            <a class="nav-link" href="#">About</a>
+            <a class="nav-link" href="{{ url_for('views.about') }}">About</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Contact</a>
+            <a class="nav-link" href="#">{{ url_for('views.contact') }}</a>
           </li>
         </ul>
         <button
@@ -172,7 +172,7 @@
         <button type="submit"><i class="fa fa-search"></i></button>
       </form>
     </div>
-    
+
     <div class="main-container">
       <div id="video-panel">
         <div id="video-container">
@@ -267,12 +267,23 @@
         <p>{{ current_video_data.description }}</p>
 
         <div class="comment-section">
-          <form id="commentForm" action="{{ url_for('views.save_comment') }}" method="POST">
-              <div class="form-group">
-                  <input type="hidden" name="video_id" value="{{ video_id }}">
-                  <textarea class="form-control" rows="5" id="comment" name="comment" placeholder="Enter your comment here"></textarea>
-              </div>
-              <button type="submit" class="btn btn-danger">Add Comment</button>
+          <h2>Comments</h2>
+          <form
+            id="commentForm"
+            action="{{ url_for('views.save_comment') }}"
+            method="POST"
+          >
+            <div class="form-group">
+              <input type="hidden" name="video_id" value="{{ video_id }}" />
+              <textarea
+                class="form-control"
+                rows="5"
+                id="comment"
+                name="comment"
+                placeholder="Add a comment"
+              ></textarea>
+            </div>
+            <button type="submit" class="btn btn-danger">Add Comment</button>
           </form>
         </div>
 
@@ -280,9 +291,9 @@
           <ul>
             {% for comment in comments_data %}
             <li>
-              {{ comment.username }}
-              <br/>
-              {{ comment.comment }}
+              <img src="{{ url_for('static', filename='anonymous.png') }}" />
+              <h6><span>&#64;</span> {{ comment.username }}</h6>
+              <p>{{ comment.comment }}</p>
             </li>
             {% endfor %}
           </ul>
@@ -436,56 +447,79 @@
     </script>
 
     <script>
-        $(document).ready(function () {
-            $('#videoForm').submit(function (e) {
-                e.preventDefault();
-                var form = $(this);
-                var formData = form.serialize();
-                // console.log(formData)
-        
-                $.ajax({
-                    type: form.attr('method'),
-                    url: form.attr('action'),
-                    data: formData,
-                    success: function (response) {
-                        if (response.success) {
-                            $('#videoModal').modal('hide');
-                        } else {
-                            console.log(error);
-                        }
-                    },
-                    error: function () {
-                        console.log(error);
-                    }
-                });
-            });
+      $(document).ready(function () {
+        $("#videoForm").submit(function (e) {
+          e.preventDefault();
+          var form = $(this);
+          var formData = form.serialize();
+          // console.log(formData)
+
+          $.ajax({
+            type: form.attr("method"),
+            url: form.attr("action"),
+            data: formData,
+            success: function (response) {
+              if (response.success) {
+                $("#videoModal").modal("hide");
+              } else {
+                console.log(error);
+              }
+            },
+            error: function () {
+              console.log(error);
+            },
+          });
         });
+      });
     </script>
 
     <script>
       $(document).ready(function () {
-          $('#commentForm').submit(function (e) {
-              e.preventDefault();
-              var form = $(this);
-              var formData = form.serialize();
+        $("#commentForm").submit(function (e) {
+          e.preventDefault();
+          var form = $(this);
+          var formData = form.serialize();
 
-              $.ajax({
-                  type: form.attr('method'),
-                  url: form.attr('action'),
-                  contentType: "application/x-www-form-urlencoded",
-                  data: formData,
-                  success: function (response) {
-                      if (response.status) {
-                          console.log(response.message);
-                      } else {
-                          console.log(response.message);
-                      }
-                  },
-                  error: function () {
-                      console.log(error);
-                  }
-              });
+          $.ajax({
+            type: form.attr("method"),
+            url: form.attr("action"),
+            contentType: "application/x-www-form-urlencoded",
+            data: formData,
+            success: function (response) {
+              if (response.status) {
+                console.log(response.message);
+              } else {
+                console.log(response.message);
+              }
+            },
+            error: function () {
+              console.log(error);
+            },
           });
+        });
+      });
+    </script>
+
+    <script>
+      function formatCount(count) {
+        if (count >= 1000000) {
+          return Math.floor(count / 1000000) + "m";
+        } else if (count >= 1000) {
+          return Math.floor(count / 1000) + "k";
+        } else {
+          return count.toString();
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        var likeCountElement = document.getElementById("like-count");
+        var dislikeCountElement = document.getElementById("dislike-count");
+
+        var likeCount = parseInt(likeCountElement.innerText);
+        var dislikeCount = parseInt(dislikeCountElement.innerText);
+
+        likeCountElement.innerText = formatCount(likeCount);
+        dislikeCountElement.innerText = formatCount(dislikeCount);
       });
     </script>
   </body>

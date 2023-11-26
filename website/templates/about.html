@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    
+    <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+  />
+   
+    <link rel = "icon" href = "{{ url_for('static', filename='logo.png') }}" type = "image/x-icon">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&family=Open+Sans:wght@300;600&family=Raleway:wght@300&family=Roboto+Mono:wght@200&family=Syne&display=swap" rel="stylesheet">
+     <script src="https://kit.fontawesome.com/77d82db749.js" crossorigin="anonymous"></script>
+
+     <style>
+        body{
+            margin:0;
+            padding:0;
+        }
+        #line{
+            height: 0.8vh;
+            background-color:rgb(240, 56, 56);
+
+        }
+        header{
+            position:relative;
+        }
+        nav #siteName{
+            height:85px;
+            background-color: white;
+            box-sizing: border-box;
+        
+        }
+        nav #siteName img{
+            height:50px;
+            display: inline-block;
+            margin-left: 50px;
+            position: relative;
+            top:-4px;
+
+        
+        }
+
+        nav #siteName h3{
+            display: inline-block;
+            font-family: 'Cormorant Garamond', serif;
+            position: relative;
+            top:10px;
+            font-weight: bolder;
+            font-size: 50px;
+        
+        
+        
+
+        }
+
+
+
+
+        nav{
+            background-color:  white;
+        }
+        nav #navbarNav ul .nav-btn{
+            
+            height:2.5rem;
+            width:7rem;
+            border-radius: 0;
+            background-color: white;
+            color:black;
+        
+            border:2px solid rgb(240, 56, 56);
+            text-align: center;
+            box-sizing: border-box;
+        
+        
+
+
+        }
+        nav #navbarNav ul .nav-btn  a{
+            
+
+            color:black;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 1rem;
+            font-weight: bold;
+        
+
+
+        }
+        /* footer */
+        footer{
+            height:200px;
+            background-color: white;
+            text-align: center;
+        
+        }
+        footer #footersiteName img{
+            height:40px;
+            position: relative;
+            top:-10px;
+        
+        }
+        footer #footersiteName h3{
+            display: inline-block;
+            font-family: 'Cormorant Garamond', serif;
+
+            margin-top: 2.5%;
+            font-weight: lighter;
+            box-sizing: border-box;
+            font-size: 35px;
+            position:relative;
+        
+        
+        }
+
+
+
+
+        footer p{
+            font-family: 'Raleway', sans-serif;
+        
+            margin-top: 3%;
+        }
+        .main-container{
+            background-image: url("{{ url_for('static', filename='about.png') }}");
+            background-size: cover;
+            box-shadow: inset 0 0 0 1000px rgba(243, 56, 56, 0.7);
+          
+            height:500px;
+            width:100%;
+            justify-content: center;
+            align-items: center;
+            display:flex;
+            flex-direction: column;
+            color:white;
+
+        }
+        .main-container h1{
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 4.5rem;
+            width:35%;
+            margin-left:10%;
+        
+            font-weight: bolder;
+         
+        }
+        @media screen and (max-width:900px){
+            .main-container h1{
+          
+            font-size: 3rem;
+            
+           
+         
+        }
+        }
+        .next-container{
+         
+          
+            height:400px;
+            width:100%;
+            justify-content: center;
+            align-items: center;
+            display:flex;
+            flex-direction: column;
+      
+            padding:4%;
+     
+
+        }
+        .next-container h1{
+            font-family: 'Cormorant Garamond', serif;
+
+            font-size: 4rem;
+        
+            font-weight: bolder;
+         
+        }
+        .next-container p{
+         
+            overflow: auto;
+            width:60%;
+         
+           
+         
+        }
+        @media screen and (max-width:900px){
+            .next-container h1{
+          
+            font-size: 3rem;
+            
+           
+         
+           }
+        }
+
+        /* team */
+.team{
+    height:700px;
+    background-color:#f7f7f7;
+    text-align: center;
+    padding:4%;
+
+    width:100%;
+}
+.team h1{
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: bolder;
+    font-size: 60px;
+    margin-bottom: 5%;
+}
+.team .member{
+    display: flex;
+    justify-content: center;
+    width:100%;
+    height:70%;
+}
+.team .member .partner{
+    display: flex;
+
+    justify-content: space-between;
+    border:2px solid  rgb(240, 56, 56);
+    height:100%;
+    width:25%;
+    margin:1%;
+    flex-direction: column;
+    
+}
+
+.team .member .partner img{
+    height:65%;
+    margin:0 10%;
+ 
+    
+}
+.team .member .partner .line{
+    margin:0 10%;
+
+    border:0.5px solid  rgb(240, 56, 56);
+ 
+    
+}
+        /* about */
+#about{
+    height:750px;
+    background-color:rgb(248, 211, 213);
+    display: flex;
+   
+    padding-top: 4%;
+    width:100%;
+    
+    
+}
+
+#about #left{
+    box-sizing: border-box;
+    display: inline-block;
+    width:50%;
+    padding-top: 5%;
+    padding-left:10%;
+}
+#about #left h3{
+    width:100%;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 60px;
+    font-weight: bolder;
+    margin-bottom: 9%;
+    
+}
+#about #left #para{
+ 
+    width:100%;
+    height:60%;
+    line-height: 1.2rem;
+    overflow: scroll;
+   
+}
+#about #right{
+    padding-top: 4%;
+    padding-bottom: 2%;
+    padding-left:10%;
+    width:45%;
+}
+#about #right img{
+    width:100%;
+    height:78%;
+}
+@media screen and (max-width:800px){
+    .team {
+    
+    height:fit-content;
+    
+}
+    .team .member{
+    flex-direction: column;
+
+    
+}
+.team .member .partner{
+    
+    width:70%;
+    margin:auto;
+    margin-bottom: 5%;
+   
+    
+}
+}
+
+@media screen and (max-width:1100px){
+    
+    
+    #about{
+    flex-direction: column;
+    height:fit-content;
+}
+    #about #left{
+        width:100%; 
+        padding-right: 7%;
+    }
+    #about #right{
+        height:50%;
+        min-height:200px;
+        width:40%; 
+        margin-left: 25%;
+    }
+  
+}
+       
+
+
+        
+     </style>
+
+</head>
+
+<body>
+    <header>
+        <div id="line"></div>
+        
+    </header>
+    
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div id="siteName">
+            <img src="{{ url_for('static', filename='logo.png') }}">
+            <h3>VideoQuest</h3>
+            
+        </div>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+         
+                <li class="nav-item active nav-btn mr-3">
+                    <a class="nav-link" href="{{ url_for('views.home') }}">Home</a>
+                </li>
+                <li class="nav-item active nav-btn">
+                    <a class="nav-link" href="{{ url_for('views.index') }}">Discover</a>
+                </li>
+               
+            </ul>
+        </div>
+    </nav>
+    <div class="main-container">
+   
+      <h1>Navigating a universe of stories,one click at a time.</h1>
+     
+      
+    </div>
+    
+    <div class="next-container">
+        <h1>About VideoQuest</h1>
+        <p>Our mission at VideoQuest is to transform the way you experience and connect with the world through the compelling language of video. We curate a diverse tapestry of narratives, each click unlocking a door to a new realm of visual storytelling. Our platform is more than a search engine; it's a journey facilitator, guiding you through a universe of emotions, knowledge, and creativity. At VideoQuest, we celebrate the power of discovery, fostering connections between creators and viewers alike. Join us in this exploration of boundless stories, where every moment holds the promise of something extraordinary. Together, let's redefine the art of discovery in the digital age.</p>
+    </div>
+    <div class="team">
+      <h1>Our Team</h1>
+      <div class="member">
+        <div class="partner">
+            <img src="{{ url_for('static', filename='sagnik.png') }}" style=" box-sizing: border-box; padding:12%;">
+            <div class="line"></div>
+            <h5>Sagnik Goswami</h5>
+            <h6  style="margin:0;">Mail: goswami.5@iitj.ac.in</h6>
+            <h6>Contact: 8719818688</h6>
+         
+        </div>
+        <div class="partner">
+            <img src="{{ url_for('static', filename='akriti.png') }}" >
+            <div class="line"></div>
+            <h5>Akriti Gupta</h5>
+            <h6  style="margin:0;">Mail: gupta.97@iitj.ac.in</h6>
+    
+            <h6>Contact: 8719818688</h6>
+        </div>
+        <div class="partner">
+            <img src="{{ url_for('static', filename='tanish.png') }}" style=" box-sizing: border-box; padding:12%;">
+            <div class="line"></div>
+            <h5 >Tanish Pagaria</h5>
+            <h6  style="margin:0;">Mail: pagaria.1@iitj.ac.in</h6>
+            <h6>Contact: 8719818688</h6>
+        </div>
+      </div>
+    </div>
+    <section id="about">
+        <div id="left">
+            <h3>Exploring the Essence of Infinite Videos...</h3>
+            <div id="para">
+                <p>Welcome to VideoQuest, where our passion lies in uncovering the diverse world of videos. We are a dedicated community of seekers, curators, and visual enthusiasts, driven by the belief that every video holds a unique narrative waiting to be discovered. Our mission is to provide you with a seamless platform for exploring videos, offering a glimpse of their creativity, diversity, and the experiences they offer.</p>
+             
+                <p>Our team of seasoned curators and video aficionados collaborates to bring you comprehensive insights, engaging content, and essential information about videos from across the digital landscape. We believe that empowering users to explore and appreciate the richness of video content enhances their viewing experiences and deepens their connection with the ever-expanding world of visual storytelling.</p>
+                <p>VideoQuest is your go-to destination for discovering and enjoying the vast array of videos. Join us on this journey, and together, let's navigate the boundless universe of visual exploration.</p>
+            </div>
+        </div>
+        <div id="right">
+            <img src="{{ url_for('static', filename='videoabout.png') }}">
+        </div>
+        
+    </section>
+    
+    
+   
+    
+    
+    
+  
+    
+    
+    <footer>
+        <div id="footersiteName">
+            <img src="{{ url_for('static', filename='logo.png') }}">
+            <h3>VideoQuest</h3>
+        </div>
+       
+        <p>©2023 by VideoQuest. All rights reserved.</p>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    
+</body>
+</html>

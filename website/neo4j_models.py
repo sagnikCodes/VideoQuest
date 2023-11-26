@@ -666,7 +666,8 @@ class User(Neo4jHandler):
 
 def main():
     neo4j = Neo4jHandler(uri="bolt://localhost:7687", username="neo4j", password="password")
-    neo4j.update_cache()
+    # neo4j.create_initial_graph()
+    # neo4j.update_cache()
 
 
 if __name__ == "__main__":

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+    <link rel="icon" href="{{ url_for('static', filename='logo.png') }}" type="image/x-icon">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&family=Open+Sans:wght@300;600&family=Raleway:wght@300&family=Roboto+Mono:wght@200&family=Syne&display=swap"
+        rel="stylesheet">
+    <script src="https://kit.fontawesome.com/77d82db749.js" crossorigin="anonymous"></script>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #line {
+            height: 0.8vh;
+            background-color: rgb(240, 56, 56);
+
+        }
+
+        header {
+            position: relative;
+        }
+
+        nav #siteName {
+            height: 85px;
+            background-color: white;
+            box-sizing: border-box;
+
+        }
+
+        nav #siteName img {
+            height: 50px;
+            display: inline-block;
+            margin-left: 50px;
+            position: relative;
+            top: -4px;
+
+
+        }
+
+        nav #siteName h3 {
+            display: inline-block;
+            font-family: 'Cormorant Garamond', serif;
+            position: relative;
+            top: 10px;
+            font-weight: bolder;
+            font-size: 50px;
+
+
+
+
+        }
+
+
+
+
+        nav {
+            background-color: white;
+        }
+
+        nav #navbarNav ul .nav-btn {
+
+            height: 2.5rem;
+            width: 7rem;
+            border-radius: 0;
+            background-color: white;
+            color: black;
+
+            border: 2px solid rgb(240, 56, 56);
+            text-align: center;
+            box-sizing: border-box;
+
+
+
+
+        }
+
+        nav #navbarNav ul .nav-btn a {
+
+
+            color: black;
+            font-family: 'Open Sans', sans-serif;
+            font-size: 1rem;
+            font-weight: bold;
+
+
+
+        }
+
+        /* footer */
+        footer {
+            height: 200px;
+            background-color: white;
+            text-align: center;
+
+        }
+
+        footer #footersiteName img {
+            height: 40px;
+            position: relative;
+            top: -10px;
+
+        }
+
+        footer #footersiteName h3 {
+            display: inline-block;
+            font-family: 'Cormorant Garamond', serif;
+
+            margin-top: 2.5%;
+            font-weight: lighter;
+            box-sizing: border-box;
+            font-size: 35px;
+            position: relative;
+
+
+        }
+
+
+
+
+        footer p {
+            font-family: 'Raleway', sans-serif;
+
+            margin-top: 3%;
+        }
+
+        /* contact */
+        #contact {
+            height: 1000px;
+            background-color: rgb(248, 211, 213);
+            text-align: center;
+            color: black;
+            box-sizing: border-box;
+            padding-top: 4%;
+        }
+
+        #contact #heading {
+            margin-bottom: 70px;
+        }
+
+        #contact #heading h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 50px;
+            margin-bottom: 2%;
+            font-weight: bolder;
+
+        }
+
+        #contact #heading p {
+            margin: 0 4% 1%;
+
+            font-family: 'Raleway', sans-serif;
+
+
+
+        }
+
+        form {
+            position: relative;
+        }
+
+        form .fill {
+            display: inline-block;
+
+            height: 63px;
+            background-color: transparent;
+            margin-bottom: 8px;
+            border-color: black;
+            border-width: 0 0 2px 0;
+            font-size: 16px;
+        }
+
+        form input[type="text"] {
+            width: 70.5%;
+        }
+
+        form #email,
+        #phone {
+            width: 35%;
+
+        }
+
+        form textarea {
+            margin-top: 8px;
+            padding-top: 14px;
+            padding-bottom: 40px;
+            width: 70.5%;
+            height: 240px;
+            background-color: transparent;
+            border-width: 0 0 2px 0;
+            border-color: black;
+            font-size: 16px;
+        }
+
+        form input:focus,
+        textarea:focus {
+            outline: none;
+            border-width: 2px;
+            border-radius: 0;
+            border-color: black;
+        }
+
+        form input::placeholder,
+        textarea::placeholder {
+            font-family: 'Raleway', sans-serif;
+            color: black;
+            font-size: 16px;
+        }
+
+        form #btn {
+            background-color: black;
+
+            height: 60px;
+
+            color: white;
+            font-size: 1.3rem;
+
+
+            border: 0;
+            position: absolute;
+            bottom: -20px;
+            left: 0;
+            right: 0;
+            margin-left: auto;
+            margin-right: auto;
+            width: 100px;
+
+        }
+
+        form #btn:hover {
+            opacity: 0.4;
+        }
+
+        @media screen and (max-width:600px) {
+            #contact {
+                height: 800px;
+            }
+
+            #contact #heading h2 {
+
+                font-size: 30px;
+
+
+            }
+
+            #contact #heading p {
+
+                font-size: 15px;
+
+
+            }
+
+            form #btn {
+                bottom: -15px;
+                width: 24%;
+                height: 40px;
+                font-size: 0.8rem;
+
+
+            }
+
+        }
+    </style>
+
+</head>
+
+<body>
+    <header>
+        <div id="line"></div>
+
+    </header>
+
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div id="siteName">
+            <img src="{{ url_for('static', filename='logo.png') }}">
+            <h3>VideoQuest</h3>
+
+        </div>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+
+                <li class="nav-item active nav-btn">
+                    <a class="nav-link" href="{{ url_for('views.home') }}">Home</a>
+                </li>
+
+            </ul>
+        </div>
+    </nav>
+    <section id="contact">
+        <div id="heading">
+            <h2>Contact Us</h2>
+            <p>Feel free to reach out for any inquiries, recommendations, or to share your video exploration experiences
+                with us. We're here to listen and connect you to a world of captivating content.</p>
+            <p>|| Connecting Perspectives through Visual Journeys ||</p>
+        </div>
+
+        <form>
+
+            <input type="text" id="first-name" class="fill" name="first-name" placeholder="First Name"><br>
+
+            <input type="text" id="last-name" name="last-name" class="fill" placeholder="Last Name"><br>
+            <input type="email" id="email" name="phone" class="fill" placeholder="Email">
+            <input type="tel" id="phone" name="phone" class="fill" placeholder="Phone"><br>
+            <textarea name="comment" placeholder="Comments"></textarea>
+            <input type="submit" id="btn">
+        </form>
+    </section>
+
+
+
+
+
+
+
+
+
+    <footer>
+        <div id="footersiteName">
+            <img src="{{ url_for('static', filename='logo.png') }}">
+            <h3>VideoQuest</h3>
+        </div>
+
+        <p>©2023 by VideoQuest. All rights reserved.</p>
+    </footer>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+</body>
+
+</html>

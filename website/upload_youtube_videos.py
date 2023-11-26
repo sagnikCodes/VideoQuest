@@ -106,7 +106,6 @@ class Upload(object):
             neo4j_handler.create_similar_description_relationship(video_id, uploaded_video_id)
             neo4j_handler.create_similar_title_relationship(video_id, uploaded_video_id)
             neo4j_handler.create_video_channel_relationship(uploaded_video_id)
-    
 
     def upload_video(self, url):
         video_data = self.get_video_data(url)
