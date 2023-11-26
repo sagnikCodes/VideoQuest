@@ -89,7 +89,7 @@
   
                   <form method="post" action="{{ url_for('auth.signup') }}">
                     <div id="logo" class="col-12 justify-content-center d-flex my-1">
-                      
+                       
                       <span class="h1 fw-bold mb-0"><img src="{{url_for('static', filename='logo.png')}}">
                         <h3>VideoQuest</h3></span>
                     </div>
@@ -115,6 +115,20 @@
                       <label class="form-label" for="password_confirm">Confirm Password</label>
                       <input type="password" id="password_confirm" class="form-control form-control-lg" name="password_confirm" required/>
                     </div>
+                    {% with messages = get_flashed_messages() %}
+                      {% if messages %}
+                        <ul class="flashes mb-5 mr-4 ml-0 p-0">
+                        {% for message in messages %}
+                        <div class="alert alert-danger alter-dismissable fade show" role="alert">
+                          {{ message }}
+                          <button type="button" class="close" data-dismiss="alert">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        {% endfor %}
+                        </ul>
+                      {% endif %}
+                    {% endwith %}
                     <div class="pt-1 mb-4 mr-4">
                         <button class="btn btn-dark btn-lg btn-block" type="submit" style="background-color: black; border-radius: 0;">Sign up</button>
                     </div>

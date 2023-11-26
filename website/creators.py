@@ -42,6 +42,13 @@ def emotional_analysis(comment):
 
 def get_overall_emotion(video_id):
     comments = get_comments(current_user.id, video_id)
+    if len(comments) == 0:
+        emotion = {
+            "hate_speech": 0,
+            "offensive_language": 0,
+            "neutral": 100
+        }
+        return emotion
     hate_speech = 0
     offensive_comment = 0
     neutral = 0
@@ -68,11 +75,12 @@ def get_overall_emotion(video_id):
 @creators.route("/analytics", methods=['GET', 'POST'])
 def show_analytics():
     if request.method == 'POST':
-        url = request.form.get("url")
-        print(url)
-        pattern = re.compile(r'(?<=v=)[\w-]+|(?<=youtu.be\/)[\w-]+')
-        video_id = pattern.findall(url)[0] 
-        print(video_id)
-        emotion = get_overall_emotion(video_id)
-        return render_template("analysis.html", emotion=emotion)
+        try:
+            url = request.form.get("url")
+            pattern = re.compile(r'(?<=v=)[\w-]+|(?<=youtu.be\/)[\w-]+')
+            video_id = pattern.findall(url)[0] 
+            emotion = get_overall_emotion(video_id)
+            return render_template("analysis.html", emotion=emotion)
+        except:
+            return render_template("error.html")
     return render_template("get.html")
