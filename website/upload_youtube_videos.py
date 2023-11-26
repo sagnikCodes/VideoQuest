@@ -9,7 +9,7 @@ from pymongo import MongoClient
 import re
 from .mongodb_models import MongoDBHandler
 from .neo4j_models import Neo4jHandler
-from .preprocessing import get_relevant_keywords_from_videodata
+from .preprocessing import get_relevant_keywords_from_videodata, get_captions
 
 
 class Upload(object):
@@ -69,6 +69,7 @@ class Upload(object):
         result = {}
         pattern = re.compile(r'(?<=v=)[\w-]+|(?<=youtu.be\/)[\w-]+')
         videoId = pattern.findall(url)[0]     
+        tags = tags + get_captions(videoId)
         result["videoId"] = videoId
         result["channelId"] = channelId
         result["title"] = title
@@ -76,7 +77,6 @@ class Upload(object):
         result["description"] = description
         result["categoryId"] = 0
         result["tags"] = tags
-        # print(tags)
         result["viewCount"] = int(viewCount)
         result["likeCount"] = likeCount
         result["dislikeCount"] = 0  # youtube doesn't show dislike count nowadays

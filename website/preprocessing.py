@@ -4,8 +4,24 @@ import json
 import re
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+from youtube_transcript_api import YouTubeTranscriptApi 
+
 stop_words = set(stopwords.words('english'))
 
+
+# fetching captions for the video with the given video id
+def get_captions(video_id):
+    try:
+        srt = YouTubeTranscriptApi.get_transcript(f"{video_id}")
+        caption = " ".join([content['text'] for content in srt])
+        caption = re.sub(r'\[.*?\]', '', caption)
+        caption = caption.lower().strip()
+        caption = " ".join([word for word in caption.split() if word not in stop_words])
+    except:
+        caption = ""
+    finally:
+        return get_relevant_words(caption)
+    
 
 # extracting only relevant keywords from a given text
 def get_relevant_words(text):
@@ -34,7 +50,7 @@ def preprocess():
     if not os.path.exists(output_directory_path):
         os.makedirs(output_directory_path)
 
-    for filepath in os.listdir(input_directory_path):
+    for filepath in ['7izt614wtgI.json']:
         if os.path.exists(os.path.join(output_directory_path, filepath)):
             continue
         file = open(os.path.join(input_directory_path, filepath))
@@ -48,11 +64,13 @@ def preprocess():
         required_data['channelTitle'] = data['videoInfo']['snippet']['channelTitle']
         required_data['description'] = data['videoInfo']['snippet']['description']
         required_data['thumbnails'] = data['videoInfo']['snippet']['thumbnails']
+        caption_keywords = get_captions(data['videoInfo']['id'])
         
         try:
             required_data['tags'] = data['videoInfo']['snippet']['tags']
         except:
             required_data['tags'] = []
+        required_data['tags'] = required_data['tags'] + caption_keywords
         
         required_data['categoryId'] = int(data['videoInfo']['snippet']['categoryId'])
 
@@ -66,11 +84,12 @@ def preprocess():
             for t in taglist:
                 tags.append(t)
         tagstring = ' '.join(tags)
+        print(tagstring)
 
         relevantKeywordsList = get_relevant_words(data['videoInfo']['snippet']['title']) \
             + get_relevant_words(data['videoInfo']['snippet']['channelTitle']) \
             + get_relevant_words(data['videoInfo']['snippet']['description']) \
-            + get_relevant_words(' '.join(tagstring))
+            + get_relevant_words(tagstring)
         required_data['relevantKeywords'] = list(dict.fromkeys(relevantKeywordsList))
 
         with open(os.path.join(output_directory_path, os.path.basename(filepath)), 'w') as outfile:
@@ -97,3 +116,5 @@ def get_relevant_keywords_from_videodata(title, channel_name, description, tags)
 # main function
 if __name__ == '__main__':
     preprocess()
+    # print()
+    pass
