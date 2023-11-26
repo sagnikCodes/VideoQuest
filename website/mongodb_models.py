@@ -73,9 +73,9 @@ if __name__ == '__main__':
     mongo_handler = MongoDBHandler(url="localhost", port=27017, db_name="testdb", collection_name="videos")
     
     # upload video data to MongoDB
-    '''
+    # '''
     mongo_handler.upload_data("../preprocessed_data")
-    '''
+    # '''
 
     # demo search query
     # search_query = "manna dey"

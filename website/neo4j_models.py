@@ -6,7 +6,10 @@ import nltk
 from nltk.corpus import stopwords
 from flask_login import login_required, current_user
 from sys import stderr
-from .mongodb_models import MongoDBHandler
+try:
+    from .mongodb_models import MongoDBHandler
+except:
+    from mongodb_models import MongoDBHandler
 
 client = MongoClient('localhost', 27017)
 db = client['testdb']
@@ -678,8 +681,8 @@ class User(Neo4jHandler):
 
 def main():
     neo4j = Neo4jHandler(uri="bolt://localhost:7687", username="neo4j", password="password")
-    # neo4j.create_initial_graph()
-    # neo4j.update_cache()
+    neo4j.create_initial_graph()
+    neo4j.update_cache()
 
 
 if __name__ == "__main__":

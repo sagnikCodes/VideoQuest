@@ -50,7 +50,7 @@ def preprocess():
     if not os.path.exists(output_directory_path):
         os.makedirs(output_directory_path)
 
-    for filepath in ['7izt614wtgI.json']:
+    for filepath in os.listdir(input_directory_path):
         if os.path.exists(os.path.join(output_directory_path, filepath)):
             continue
         file = open(os.path.join(input_directory_path, filepath))
@@ -84,7 +84,7 @@ def preprocess():
             for t in taglist:
                 tags.append(t)
         tagstring = ' '.join(tags)
-        print(tagstring)
+        # print(tagstring)
 
         relevantKeywordsList = get_relevant_words(data['videoInfo']['snippet']['title']) \
             + get_relevant_words(data['videoInfo']['snippet']['channelTitle']) \
