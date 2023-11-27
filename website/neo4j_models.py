@@ -369,17 +369,16 @@ class Neo4jHandler(object):
         comments = get_comments(current_user_id=user_id, video_id=video_id)
 
         weightage_likes = 1
-        weightage_dislikes = -2
-        weightage_views = 3
+        weightage_dislikes = -1
         weightage_same_channel = 4
-        weightage_num_common_words_description = 100
-        weightage_num_common_words_title = 100
-        weightage_num_common_tags = 100
+        weightage_num_common_words_description = 10
+        weightage_num_common_words_title = 10
+        weightage_num_common_tags = 10
         weightage_liked_video = 2
         weightage_disliked_video = -2
         weightage_subsribed_channel_of_video = 2
 
-        weightage_next_video = 1
+        weightage_next_video = 15
         randomforest_prediction = self.get_next_video_prediction(user_id=current_video_id, current_video_id=current_video_id)
         if randomforest_prediction:
             weightage_randomforest = (randomforest_prediction == video_id)
@@ -396,8 +395,8 @@ class Neo4jHandler(object):
 
         relation_data = relations_cache[current_video_id][video_id]
         
-        score = weightage_likes * video_data["likes"] + weightage_dislikes * video_data["dislikes"] + \
-            weightage_views * video_data["views"] + weightage_same_channel * relation_data["same_channel"] + \
+        score = weightage_likes * video_data["likes"]/video_data["views"] + weightage_dislikes * video_data["dislikes"]/video_data["views"] + \
+            weightage_same_channel * relation_data["same_channel"] + \
             weightage_num_common_words_description * relation_data["num_common_words_description"] + \
             weightage_num_common_words_title * relation_data["num_common_words_title"] + \
             weightage_num_common_tags * relation_data["num_common_tags"] + \

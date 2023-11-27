@@ -20,7 +20,7 @@ def login():
         if user:
             if user.password == password:
                 login_user(user, remember=True)
-                return redirect(url_for('views.home'))
+                return redirect(url_for('views.search'))
             else:
                 flash('Incorrect password, try again.', category='error')
                 return render_template("login.html", user=current_user)
@@ -70,6 +70,6 @@ def signup():
         users[user_id] = {"liked": [], "disliked": [],"subscribed": [], "hit_bell_icon": []}
         with open("users.json", "w") as file:
             json.dump(users, file)
-        return redirect(url_for('views.home'))
+        return redirect(url_for('views.search'))
         
     return render_template("signup.html", user=current_user)

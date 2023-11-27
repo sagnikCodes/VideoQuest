@@ -28,8 +28,8 @@ def remove_stopwords(text):
 
 
 def emotional_analysis(comment):
-    comment = remove_tags(comment)
-    comment = remove_stopwords(comment)
+    # comment = remove_tags(comment)
+    # comment = remove_stopwords(comment)
     comment = np.array([comment])
     
     response = {}

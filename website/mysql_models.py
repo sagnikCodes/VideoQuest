@@ -57,6 +57,13 @@ class Comment(db.Model, UserMixin):
     timestamp = db.Column(db.DateTime(timezone=True), default=func.now())
 
 
+class History(db.Model, UserMixin):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer)
+    video_id = db.Column(db.String(150))
+    timestamp = db.Column(db.DateTime(timezone=True), default=func.now())
+
+
 def get_click_through_data():
     next_video_data = NextVideo.query.all()
     neo4j_handler = Neo4jHandler()

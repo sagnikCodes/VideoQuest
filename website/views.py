@@ -4,7 +4,7 @@ from flask import request
 from flask import jsonify
 from .mongodb_models import MongoDBHandler
 from .neo4j_models import Neo4jHandler, User as Neo4jUser
-from .mysql_models import SearchQuery, NextVideo, Like, Subscribe, Comment
+from .mysql_models import SearchQuery, NextVideo, Like, Subscribe, Comment, History
 from .mysql_models import get_comments
 from . import db
 from sys import stderr
@@ -81,7 +81,8 @@ def video(video_id):
             current_video_data=current_video_data, suggested_videos=suggested_videos,
             liked=liked, disliked=disliked, subscribed=subscribed,
             comments_data=comments_data)
-    except:
+    except Exception as e:
+        print(e, file=stderr)
         return render_template("error.html")
 
 
@@ -211,6 +212,10 @@ def next_video():
             neo4j_handler = Neo4jHandler()
             neo4j_handler.update_views(video_id=next_video_id)
 
+            new_history = History(user_id=current_user.id, video_id=next_video_id)
+            db.session.add(new_history)
+            db.session.commit()
+
             new_next_video = NextVideo(user_id=current_user.id, current_video_id=current_video_id, next_video_id=next_video_id)
             db.session.add(new_next_video)
             db.session.commit()
@@ -246,6 +251,10 @@ def save_search_query():
 
             neo4j_handler = Neo4jHandler()
             neo4j_handler.update_views(video_id=video_clicked)
+
+            new_history = History(user_id=current_user.id, video_id=video_clicked)
+            db.session.add(new_history)
+            db.session.commit()
 
             new_search_query = SearchQuery(user_id=current_user.id, query=search_query, video_clicked=video_clicked)
             db.session.add(new_search_query)
@@ -294,3 +303,25 @@ def about():
 @views.route('/contact', methods=['GET', 'POST'])
 def contact():
     return render_template("contact.html", user=current_user)
+
+
+@login_required
+@views.route('/history', methods=['GET', 'POST'])
+def history():
+    history_data = History.query.filter_by(user_id=current_user.id).order_by(History.timestamp.desc()).all()
+
+    mongo_handler = MongoDBHandler()
+
+    unique_video_ids = []
+    unique_history_data = []
+    for history in history_data:
+        if history.video_id not in unique_video_ids:
+            unique_video_ids.append(history.video_id)
+            unique_history_data.append({
+                'video_id': history.video_id,
+                'timestamp': history.timestamp,
+                'video_title': mongo_handler.get_data(video_id=history.video_id)['title'],
+                'video_thumbnail': mongo_handler.get_data(video_id=history.video_id)['thumbnails']['high']['url'],
+            })
+
+    return render_template("history.html", user=current_user, history_data=unique_history_data)
