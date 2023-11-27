@@ -315,6 +315,7 @@ def history():
     unique_video_ids = []
     unique_history_data = []
     for history in history_data:
+        print(history.video_id, file=stderr)
         if history.video_id not in unique_video_ids:
             unique_video_ids.append(history.video_id)
             unique_history_data.append({

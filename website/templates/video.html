@@ -47,7 +47,7 @@
       type="text/css"
       href="{{ url_for('static', filename='styles.css') }}"
     />
-    
+
     <script
       src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
       integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
@@ -98,9 +98,19 @@
               >Contact</a
             >
           </li>
-         
+
+          <li class="nav-item mr-4">
+            <a class="nav-link" href="{{ url_for('views.search') }}">Home</a>
+          </li>
+          <li class="nav-item mr-4">
+            <a class="nav-link" href="{{ url_for('views.history') }}"
+              >Watch History</a
+            >
+          </li>
           <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('views.home') }}">Home</a>
+            <a class="nav-link" href="{{ url_for('creators.show_analytics') }}"
+              >View Analytics</a
+            >
           </li>
         </ul>
 
@@ -486,7 +496,7 @@
               if (response.success) {
                 $("#videoModal").modal("hide");
               } else {
-                console.log(error);
+                console.log("Failed to upload video.");
               }
             },
             error: function () {
@@ -537,7 +547,7 @@
 
     <script>
       function formatCount(count) {
-        if (count >= 1000000000 ) {
+        if (count >= 1000000000) {
           return Math.floor(count / 1000000000) + "B";
         } else if (count >= 1000000) {
           return Math.floor(count / 1000000) + "M";

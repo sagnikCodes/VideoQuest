@@ -31,6 +31,20 @@ class MongoDBHandler(object):
         result = self.collection.find_one({"videoId": video_id})
         result['_id'] = str(result['_id'])
         return result
+    
+    def get_tags(self, video_id):
+        result = self.collection.find_one({"videoId": video_id})
+        tags = result['tags']
+        
+        taglist = set()
+
+        for tag in tags:
+            tag = tag.lower().split()
+            for each in tag:
+                taglist.add(each)
+
+        return list(taglist)        
+
 
     def search(self, search_query, search_threshold=0.85):
         '''
@@ -45,21 +59,42 @@ class MongoDBHandler(object):
         
         filtered_results = []
         for document in result:
+            title = document['title']
+            channel_title = document['channelTitle']
+
+            title_similarity_score = 0
+            channel_title_similarity_score = 0
+
+
             relevant_keywords = document['relevantKeywords']
             # similar_word_count = 0
-            similar_words = []
+            # similar_words = []
             similarity_score = 0
 
             for word in search_query:
                 for keyword in relevant_keywords:
                     if jaro_similarity(word, keyword) >= search_threshold:
                         # similar_word_count += 1
-                        similar_words.append((word, keyword))
+                        # similar_words.append((word, keyword))
                         similarity_score += jaro_similarity(word, keyword)
+                for word_ in title.split():
+                    if jaro_similarity(word, word_) >= search_threshold:
+                        # similar_word_count += 1
+                        # similar_words.append((word, word_))
+                        title_similarity_score += jaro_similarity(word, word_)
+                for word_ in channel_title.split():
+                    if jaro_similarity(word, word_) >= search_threshold:
+                        # similar_word_count += 1
+                        # similar_words.append((word, word_))
+                        channel_title_similarity_score += jaro_similarity(word, word_)
+
+            total_similarity_score = 10*title_similarity_score + \
+                    10*channel_title_similarity_score + \
+                    similarity_score
                 
             # document['similarity'] = similar_word_count
-            document['similarWords'] = similar_words
-            document['similarityScore'] = similarity_score
+            # document['similarWords'] = similar_words
+            document['similarityScore'] = total_similarity_score
             filtered_results.append(document)
 
         for result in filtered_results:
@@ -76,17 +111,4 @@ if __name__ == '__main__':
     # '''
     mongo_handler.upload_data("../preprocessed_data")
     # '''
-
-    # demo search query
-    # search_query = "manna dey"
-    # result = mongo_handler.search(search_query)
-    
-    # for document in result:
-    #     print(document['title'])
-    #     print(document['similarWords'])
-    #     print()
-
-    # videoId = "-0ziqk9cZRM"
-    # result = mongo_handler.get_data(videoId)
-    # print(result)
 

@@ -42,6 +42,7 @@ def emotional_analysis(comment):
 
 def get_overall_emotion(video_id):
     comments = get_comments(current_user.id, video_id)
+    comments = [comment['comment'] for comment in comments]
     if len(comments) == 0:
         emotion = {
             "hate_speech": 0,

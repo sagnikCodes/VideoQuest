@@ -1,3 +1,4 @@
+import json
 from selenium import webdriver
 from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
@@ -47,7 +48,7 @@ class Upload(object):
             
         
         
-    def get_video_data(self, url, waiting_time=15):
+    def get_video_data(self, url, waiting_time=5):
         options = webdriver.FirefoxOptions()
         options.add_argument('--headless')  # Because, we don't want it to pop up
         driver = webdriver.Firefox(options=options)
@@ -68,7 +69,13 @@ class Upload(object):
         tags = self.get_tags(description)
         result = {}
         pattern = re.compile(r'(?<=v=)[\w-]+|(?<=youtu.be\/)[\w-]+')
-        videoId = pattern.findall(url)[0]     
+        videoId = pattern.findall(url)[0]
+
+        with open('individual.json', 'r') as file:
+            individual = json.load(file)
+        if videoId in individual:
+            return None
+
         tags = tags + get_captions(videoId)
         result["videoId"] = videoId
         result["channelId"] = channelId
@@ -108,7 +115,10 @@ class Upload(object):
             neo4j_handler.create_video_channel_relationship(uploaded_video_id)
 
     def upload_video(self, url):
+        print(url)
         video_data = self.get_video_data(url)
+        if video_data is None:
+            return
         self.add_data_to_mongodb(video_data)
         self.add_data_to_neo4j(video_data)
         neo4j = Neo4jHandler()
