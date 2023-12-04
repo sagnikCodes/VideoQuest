@@ -1,2 +1,1 @@
-# DE
-DE Project
+# VideoQuest - Video Search Engine
