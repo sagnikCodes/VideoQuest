@@ -9,7 +9,6 @@ This project is a video search engine application with a graphical user interfac
 - [Video Demonstration](https://drive.google.com/file/d/1EUzJmuM91H0Fe28PXFvUMv_X57JwLa-Z/view?usp=drive_link)
 - [Saved Models](https://drive.google.com/drive/folders/1PQxg29JX-YMdvFJCsMQGtK1B7J8ujtuk?usp=drive_link)
 
-
 ## Project Directory Structure
 ### Root Directory
 | Directory/File | Description |
@@ -40,6 +39,26 @@ This project is a video search engine application with a graphical user interfac
 | `upload_youtube_videos.py` | Class for uploading YouTube video data. |
 | `views.py` | Flask Blueprint for general web application routes. |
 
+## User Interface Preview
+#### Beautiful Backend and Landing Page
+![landingpages](https://github.com/sagnikCodes/VideoQuest/assets/101598170/177a5e5f-aeb4-42b0-a31e-1a8e501def8c)  
+Showcasing the aesthetically designed backend and landing page of the video search engine.
+
+#### Sign Up and Login Pages
+![signinpages](https://github.com/sagnikCodes/VideoQuest/assets/101598170/b9074603-9c66-43ee-b16c-f2206b4addf2)  
+Highlighting the user-friendly sign-up and login pages for seamless authentication.
+
+### Home Screen with Search Bar
+![home](https://github.com/sagnikCodes/VideoQuest/assets/101598170/a6aafdfc-9280-40c2-8c1e-8cd363804f76)  
+Illustrating the home screen featuring an intuitive search bar for easy video queries.
+
+#### Video Page with Suggestions and Interactions
+![video](https://github.com/sagnikCodes/VideoQuest/assets/101598170/3b4e23f5-9779-4987-a8e4-fcfeb8d4525f)  
+Providing a glimpse of the video page presenting the selected video, related suggestions, and interactive options like liking, subscribing, and adding comments.
+
+#### Upload Videos and Sentiment Analysis
+![uploadsentiment](https://github.com/sagnikCodes/VideoQuest/assets/101598170/1b08a4c6-0fd5-4f22-9f64-1a2746f6d639)  
+Showcasing the functionality allowing users to upload favorite YouTube videos and creators to check sentiment analysis for their videos.
 
 ## Features
 ### Multi-Database Integration
