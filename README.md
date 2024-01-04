@@ -53,7 +53,7 @@ Highlighting the user-friendly sign-up and login pages for seamless authenticati
 Illustrating the home screen featuring an intuitive search bar for easy video queries.
 
 #### Video Page with Suggestions and Interactions
-![video](https://github.com/sagnikCodes/VideoQuest/assets/101598170/3b4e23f5-9779-4987-a8e4-fcfeb8d4525f)  
+![video](https://github.com/sagnikCodes/VideoQuest/assets/101598170/fd7c88bf-3c26-495b-b01f-aaf08a203152)
 Providing a glimpse of the video page presenting the selected video, related suggestions, and interactive options like liking, subscribing, and adding comments.
 
 #### Upload Videos and Sentiment Analysis
